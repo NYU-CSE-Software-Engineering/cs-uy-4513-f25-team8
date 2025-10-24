@@ -1,0 +1,42 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Items</h1>
+
+<div class="items-actions">
+  <%= link_to "New item", new_item_path, class: "btn btn-primary" %>
+</div>
+
+<div id="items">
+  <% if @items.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Price per day</th>
+          <th>Category</th>
+          <th>Availability</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item.title %></td>
+            <td>$<%= number_with_precision(item.price_per_day, precision: 2) %></td>
+            <td><%= item.category %></td>
+            <td><%= item.availability %></td>
+            <td>
+              <%= link_to "Show", item %>
+              <% if defined?(current_user) && current_user && item.owner == current_user %>
+                | <%= link_to "Edit", edit_item_path(item) %>
+                | <%= link_to "Delete", item, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No items available.</p>
+  <% end %>
+</div>

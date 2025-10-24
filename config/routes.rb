@@ -9,6 +9,17 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # Authentication routes (Devise will be added later)
+  devise_for :users if defined?(Devise)
+
+  # Item routes
+  resources :items
+
+  # Booking and Payment routes
+  resources :bookings, only: [:show] do
+    resources :payments, only: [:new, :create, :show]
+  end
+
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "items#index"
 end

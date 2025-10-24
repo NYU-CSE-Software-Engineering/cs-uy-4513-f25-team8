@@ -1,0 +1,53 @@
+<p style="color: green"><%= notice %></p>
+
+<div class="item-details">
+  <h1><%= @item.title %></h1>
+
+  <% if @item.image.attached? %>
+    <div class="item-image">
+      <%= image_tag @item.image, alt: @item.title, style: "max-width: 500px;" %>
+    </div>
+  <% end %>
+
+  <div class="item-info">
+    <p>
+      <strong>Title:</strong>
+      <%= @item.title %>
+    </p>
+
+    <p>
+      <strong>Price per day:</strong>
+      $<%= number_with_precision(@item.price_per_day, precision: 2) %>
+    </p>
+
+    <p>
+      <strong>Category:</strong>
+      <%= @item.category %>
+    </p>
+
+    <p>
+      <strong>Description:</strong>
+      <%= @item.description %>
+    </p>
+
+    <p>
+      <strong>Availability:</strong>
+      <%= @item.availability %>
+    </p>
+
+    <% if @item.owner %>
+      <p>
+        <strong>Owner:</strong>
+        <%= @item.owner.email %>
+      </p>
+    <% end %>
+  </div>
+</div>
+
+<div class="item-actions">
+  <% if defined?(current_user) && current_user && @item.owner == current_user %>
+    <%= link_to 'Edit', edit_item_path(@item) %> |
+    <%= link_to 'Delete', item_path(@item), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %> |
+  <% end %>
+  <%= link_to 'Back', items_path %>
+</div>
