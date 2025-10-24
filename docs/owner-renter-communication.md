@@ -76,7 +76,7 @@ by asking questions, making plans for pickup, and keeping in contact with the **
 **MessagesController**
 
 - **'index'** - Retrieves all message threads for the current user
-- **'show'** - displays all messages for a specific booking (ordered by timestamp)
-- **'create'** - saves a new message to the database and triggers a notification to the recipient
-- **'update'** - marks messages as read when viewed by the receiver
+- **'show'** - Displays all messages for a specific booking (ordered by timestamp)
+- **'create'** - Saves a new message to the database and triggers a notification to the recipient
+- **'update'** - Marks messages as read when viewed by the receiver
 

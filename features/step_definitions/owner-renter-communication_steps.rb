@@ -1,4 +1,5 @@
 # features/step_definitions/messaging_steps.rb
+# step definitions
 
 Given("there is a registered renter account") do
   @renter = User.create!(
