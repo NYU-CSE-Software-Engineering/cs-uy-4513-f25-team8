@@ -3,12 +3,6 @@ Feature: Renter and Owner Messaging
   I want to communicate securely with an owner via messaging
   So that I can organize renting their item, ask questions, and coordinate pickup details.
 
-  Background:
-    Given there is a registered renter account
-    And there is a registered owner account
-    And the owner has an available item listed
-    And I am signed in as the renter
-
   Scenario: Renter starts a new chat with the owner (happy path)
     Given I am viewing the details page of an available item
     When I click on "Message Owner"
