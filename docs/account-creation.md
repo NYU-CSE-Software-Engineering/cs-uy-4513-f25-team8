@@ -21,7 +21,9 @@ so that I can have access to the renting and lending features
 
 ### Models
 
-A POST model that accepts at least a username and password as a string
+A POST model that accepts at least a username and password as a string,
+although in the future it would also need to accept the user's
+real first and last name, email address, and phone number
 
 ### Views
 
