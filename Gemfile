@@ -60,6 +60,10 @@ group :development do
   gem "web-console"
 end
 
+group :test, :development do
+  gem "rspec-rails"
+end
+
 group :test do
   gem 'cucumber-rails'
   gem 'capybara'
