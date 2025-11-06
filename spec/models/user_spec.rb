@@ -11,5 +11,10 @@ RSpec.describe User, type: :model do
         expect(u).not_to be_valid
         expect(u.errors[:role]).to be_present
     end
+    it "only allows role to be renter/owner/admin" do
+        u = User.new(username: "lily", role: "badrole")
+        expect(u).not_to be_valid
+        expect(u.errors[:role]).to be_present
+    end
 end
 
