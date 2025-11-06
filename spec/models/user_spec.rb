@@ -16,5 +16,9 @@ RSpec.describe User, type: :model do
         expect(u).not_to be_valid
         expect(u.errors[:role]).to be_present
     end
+    it "defaults account_status to 'active'" do
+        u = User.create!(username: "jane", role: "renter")
+        expect(u.account_status).to eq("active")
+    end
 end
 
