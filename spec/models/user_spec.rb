@@ -20,5 +20,9 @@ RSpec.describe User, type: :model do
         u = User.create!(username: "jane", role: "renter")
         expect(u.account_status).to eq("active")
     end
+    it "defaults report_count to 0" do
+        u = User.create!(username: "erfu", role: "owner")
+        expect(u.report_count).to eq(0)
+    end
 end
 
