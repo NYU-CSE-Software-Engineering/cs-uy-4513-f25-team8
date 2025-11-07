@@ -14,4 +14,5 @@ Rails.application.routes.draw do
 
   # Booking routes
   post "/bookings", to: "bookings#create"
+  patch "/bookings/:id/approve", to: "bookings#approve"
 end

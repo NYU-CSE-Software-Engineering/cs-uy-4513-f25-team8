@@ -11,6 +11,14 @@ class BookingsController < ApplicationController
     end
   end
 
+  def approve
+    booking = Booking.find(params[:id])
+    booking.update!(status: :approved)
+
+    # TODO: Send notification to renter
+    render inline: "Booking approved"
+  end
+
   private
 
   def booking_params
