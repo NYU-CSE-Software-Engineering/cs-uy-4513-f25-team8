@@ -5,9 +5,10 @@ Feature: Request and approve a booking
 
   Background:
     Given the following users exist:
-      | username | role   |
-      | isabelle | renter |
-      | erfu     | owner  |
+      | username | email                | password            | role   |
+      | isabelle | isabelle@example.com | password123         | renter |
+      | erfu     | erfu@example.com     | password123         | owner  |
+
     And the following item exists:
       | title  | owner | availability_status |
       | Camera | erfu  | available           |
