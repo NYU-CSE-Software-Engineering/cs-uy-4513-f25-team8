@@ -7,6 +7,7 @@ class User < ApplicationRecord
     validates :password, presence: true
     has_many :items, foreign_key: :owner_id, dependent: :destroy
     has_many :bookings_as_renter, class_name: "Booking", foreign_key: :renter_id, dependent: :destroy
+    has_many :bookings_as_owner, class_name: "Booking", foreign_key: :owner_id, dependent: :destroy
 
 
   attribute :account_status, :string, default: "active"
