@@ -2,9 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [ jing-ci-pipeline ]
+    branches: [ main ]
   pull_request:
-    branches: [ jing-ci-pipeline ]
+    branches: [ main ]
 
 jobs:
   test:
