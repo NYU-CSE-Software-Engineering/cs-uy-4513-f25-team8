@@ -41,5 +41,18 @@ RSpec.describe User, type: :model do
       expect(u).not_to be_valid
       expect(u.errors[:password]).to be_present
     end
+    it "can have many items if the user is an owner" do
+      owner = User.create!(
+        username: "erfu",
+        role: "owner",
+        email: "erfu@example.com",
+        password: "password123"
+      )
+
+      item1 = Item.create!(title: "Camera", price: 25.0, owner: owner)
+      item2 = Item.create!(title: "Tripod", price: 15.0, owner: owner)
+
+      expect(owner.items).to include(item1, item2)
+    end
 end
 
