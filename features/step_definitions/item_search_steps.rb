@@ -62,10 +62,6 @@ When('I enter a keyword with no matching listings in the keyword field') do
   fill_in 'Keyword', with: 'noresults'
 end
 
-Then('I should see {string}') do |message|
-  expect(page).to have_content(message)
-end
-
 When('I click on a result listing') do
   first('.item-card a').click
 end
