@@ -11,12 +11,6 @@ rescue ActiveRecord::RecordNotFound
   raise "Item with title '#{title}' not found in the database."
 end
 
-Given("the following users exist:") do |table|
-  table.hashes.each do |user_data|
-    User.create!(user_data)
-  end
-end
-
 Given("the user {string} exists with role {string} and account status {string}") do |username, role, status|
   User.find_or_create_by!(username: username) do |user|
     user.role = role

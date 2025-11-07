@@ -1,9 +1,3 @@
-Given("the following users exist:") do |table|
-  table.hashes.each do |user_attrs|
-    User.create!(username: user_attrs["username"], role: user_attrs["role"])
-  end
-end
-
 Given("the following item exists:") do |table|
   table.hashes.each do |item_attrs|
     owner = User.find_by(username: item_attrs["owner"])
