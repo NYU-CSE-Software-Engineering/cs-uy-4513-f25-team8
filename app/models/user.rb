@@ -5,5 +5,7 @@ class User < ApplicationRecord
     validates :role, presence: true, inclusion: { in: ROLES }
     validates :email, presence: true, uniqueness: true
     validates :password, presence: true
-    attribute :account_status, :string, default: "active"
+    has_many :items, foreign_key: :owner_id, dependent: :destroy
+
+  attribute :account_status, :string, default: "active"
 end
