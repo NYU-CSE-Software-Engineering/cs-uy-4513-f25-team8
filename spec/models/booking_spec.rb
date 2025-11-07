@@ -96,4 +96,23 @@ RSpec.describe Booking, type: :model do
         expect(booking.valid?).to be false
         expect(booking.errors[:status]).to include("cannot be approved if item is unavailable")
     end
+    it "transitions from requested -> approved when item is available" do
+        renter = User.create!(username: "isabelle", role: "renter")
+        owner  = User.create!(username: "erfu",     role: "owner")
+        item   = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
+
+        booking = Booking.create!(
+            item: item,
+            renter: renter,
+            owner: owner,
+            start_date: Date.new(2025, 3, 21),
+            end_date: Date.new(2025, 3, 22)
+        )
+
+        expect(booking).to be_requested
+
+        booking.update!(status: :approved)
+        booking.reload
+        expect(booking).to be_approved
+    end
 end
