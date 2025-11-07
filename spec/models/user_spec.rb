@@ -54,5 +54,38 @@ RSpec.describe User, type: :model do
 
       expect(owner.items).to include(item1, item2)
     end
+    it "can have many bookings as a renter" do
+      renter = User.create!(
+        username: "isabelle",
+        role: "renter",
+        email: "isa@example.com",
+        password: "password123"
+      )
+      owner = User.create!(
+        username: "erfu",
+        role: "owner",
+        email: "erfu@example.com",
+        password: "password123"
+      )
+      item = Item.create!(title: "Camera", price: 25.0, owner: owner)
+
+      booking1 = Booking.create!(
+        item: item,
+        renter: renter,
+        owner: owner,
+        start_date: Date.today,
+        end_date: Date.tomorrow
+      )
+
+      booking2 = Booking.create!(
+        item: item,
+        renter: renter,
+        owner: owner,
+        start_date: Date.today + 2,
+        end_date: Date.today + 3
+      )
+
+      expect(renter.bookings_as_renter).to include(booking1, booking2)
+    end
 end
 
