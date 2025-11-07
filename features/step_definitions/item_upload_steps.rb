@@ -68,10 +68,6 @@ When('I attach the file {string} to {string}') do |rel_path, label|
 end
 
 # --- Then ------------------------------------------------------------------
-Then('I should see {string}') do |text|
-  expect(page).to have_content(text)
-end
-
 Then("I should be on the created item's show page") do
   # Works for /items/123 or similar
   expect(page).to have_current_path(%r{\A/items/\d+\z}, ignore_query: true)
