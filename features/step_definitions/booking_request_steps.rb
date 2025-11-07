@@ -29,12 +29,13 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
   owner = item.owner
 
   @booking_response = post("/bookings", params: {
-    item_id: item.id,
-    renter_id: renter.id,
-    owner_id: owner.id,
-    start_date: start_date,
-    end_date: end_date,
-    status: "requested"  # explicitly set to default
+    booking: {
+      item_id: item.id,
+      renter_id: renter.id,
+      owner_id: owner.id,
+      start_date: start_date,
+      end_date: end_date
+    }
   })
 end
 
