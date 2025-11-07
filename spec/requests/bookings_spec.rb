@@ -5,8 +5,8 @@ RSpec.describe "Bookings", type: :request do
   describe "POST /bookings" do
     it "creates a booking with status requested and shows success message" do
       # Setup: create users and item
-      renter = User.create!(username: "isabelle", role: "renter")
-      owner = User.create!(username: "erfu", role: "owner")
+      renter = User.create!(username: "isabelle", role: "renter", email: "isabele@example.com", password: "password")
+      owner = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password")
       item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
 
       # Make the POST request
@@ -37,8 +37,8 @@ RSpec.describe "Bookings", type: :request do
   describe "PATCH /bookings/:id/approve" do
     it "updates booking status from requested to approved" do
       # Setup: create users, item, and a requested booking
-      renter = User.create!(username: "isabelle", role: "renter")
-      owner = User.create!(username: "erfu", role: "owner")
+      renter = User.create!(username: "isabelle", role: "renter", email: "isabelle@example.com", password: "password")
+      owner = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password")
       item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
       booking = Booking.create!(
         item: item,
