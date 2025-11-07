@@ -12,6 +12,18 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
   })
 end
 
+Given("the following item exists:") do |table|
+  table.hashes.each do |item_attrs|
+    owner = User.find_by(username: item_attrs["owner"])
+    Item.create!(
+      title: item_attrs["title"],
+      owner: owner,
+      price: 25.0,
+      availability_status: item_attrs["availability_status"]
+    )
+  end
+end
+
 Given("I am signed in as {string}") do |username|
   @current_user = User.find_by(username: username)
   raise "User #{username} not found" unless @current_user
