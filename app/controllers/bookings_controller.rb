@@ -2,11 +2,13 @@ class BookingsController < ApplicationController
   skip_forgery_protection only: :create
 
   def create
-    @booking = Booking.new(booking_params)
+    item = Item.find_by(id: booking_params[:item_id])
+
+    @booking = Booking.new(booking_params.except(:item_id).merge(item: item))
     @booking.status ||= :requested
 
     if @booking.save
-      render :create # renders create.html.erb
+      render inline: "<h1>Booking request submitted</h1>"
     else
       render inline: "Error: #{@booking.errors.full_messages.join(', ')}", status: :unprocessable_entity
     end
