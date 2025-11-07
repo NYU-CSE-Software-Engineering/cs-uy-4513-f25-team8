@@ -16,4 +16,8 @@ Rails.application.routes.draw do
   post "/login",     to: "sessions#create"
   get  "/dashboard", to: "dashboards#show"
 
+
+  # Booking routes
+  post "/bookings", to: "bookings#create"
+  patch "/bookings/:id/approve", to: "bookings#approve"
 end
