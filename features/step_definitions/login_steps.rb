@@ -1,5 +1,5 @@
-Given('I am on the login page') do
-  visit('/login')
+Given("I fill in the login field {string} with {string}") do |field, value|
+  fill_in field, with: value
 end
 
 Then('I should see the {string} link') do |link_text|
