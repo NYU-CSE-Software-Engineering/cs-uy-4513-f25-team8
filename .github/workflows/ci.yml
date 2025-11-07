@@ -27,7 +27,7 @@ jobs:
       - name: Setup database
         run: |
           cp config/database.yml config/database.yml.ci
-          rails db:setup
+          ruby bin/rails db:setup
 
       - name: Run rspec
         run: bundle exec rspec
