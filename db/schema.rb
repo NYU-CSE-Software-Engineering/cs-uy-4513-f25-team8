@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_000856) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_003503) do
+  create_table "bookings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "end_date"
+    t.integer "item_id", null: false
+    t.integer "owner_id", null: false
+    t.integer "renter_id", null: false
+    t.date "start_date"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_bookings_on_item_id"
+    t.index ["owner_id"], name: "index_bookings_on_owner_id"
+    t.index ["renter_id"], name: "index_bookings_on_renter_id"
+  end
+
   create_table "items", force: :cascade do |t|
     t.string "availability_status", default: "available", null: false
     t.datetime "created_at", null: false
@@ -30,5 +44,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_000856) do
     t.string "username"
   end
 
+  add_foreign_key "bookings", "items"
+  add_foreign_key "bookings", "users", column: "owner_id"
+  add_foreign_key "bookings", "users", column: "renter_id"
   add_foreign_key "items", "users", column: "owner_id"
 end
