@@ -20,7 +20,7 @@ Feature: Request and approve a booking
     Then I should see "Booking request submitted"
     And a booking should exist in the database with status "requested"
     When I sign out
-    And I sign in as "erfu"
+    When I sign in as "erfu"
     And I visit the owner dashboard and open the booking request for "Camera"
     And I click "Approve Booking"
     Then the booking's status should be "approved"

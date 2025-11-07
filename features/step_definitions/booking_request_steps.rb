@@ -1,13 +1,15 @@
-Given("the following item exists:") do |table|
-  table.hashes.each do |item_attrs|
-    owner = User.find_by(username: item_attrs["owner"])
-    Item.create!(
-      title: item_attrs["title"],
-      owner: owner,
-      price: 25.0,
-      availability_status: item_attrs["availability_status"]
-    )
-  end
+When("I request the item {string} for {string} to {string}") do |title, start_date, end_date|
+  item = Item.find_by(title: title)
+  renter = @current_user
+  owner = item.owner
+
+  @booking_response = post("/bookings", params: {
+    item_id: item.id,
+    renter_id: renter.id,
+    owner_id: owner.id,
+    start_date: start_date,
+    end_date: end_date
+  })
 end
 
 Given("I am signed in as {string}") do |username|
