@@ -15,4 +15,8 @@ RSpec.describe Item, type: :model do
         expect(i).not_to be_valid
         expect(i.errors[:price]).to be_present
     end
+    it "defaults availability_status to 'available'" do
+        i = Item.create!(title: "Tripod", price: 25.00)
+        expect(i.availability_status).to eq("available")
+    end
 end
