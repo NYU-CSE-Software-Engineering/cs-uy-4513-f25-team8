@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe Booking, type: :model do
     it "requires item" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu",     role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu",     role: "owner", email: "erfu@example.com", password: "password123")
         # no item on purpose
         b = Booking.new(
         item: nil,
@@ -16,8 +16,8 @@ RSpec.describe Booking, type: :model do
         expect(b.errors[:item]).to be_present
     end
     it "belongs to a renter (User)" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu", role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password123")
         item   = Item.create!(title: "Camera", price: 25.0, owner: owner)
 
         b = Booking.create!(
@@ -32,8 +32,8 @@ RSpec.describe Booking, type: :model do
         expect(b.renter).to be_a(User)
     end
     it "has a status enum that includes at least 'requested' and 'approved'" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu",     role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu",     role: "owner", email: "erfu@example.com", password: "password123")
         item   = Item.create!(title: "Camera", price: 25.0, owner: owner)
 
         b = Booking.new(
@@ -52,8 +52,8 @@ RSpec.describe Booking, type: :model do
         expect(b).to be_valid
     end
     it "is invalid if start_date is after end_date" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu", role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password123")
         item   = Item.create!(title: "Camera", price: 25.0, owner: owner)
 
         booking = Booking.new(
@@ -68,8 +68,8 @@ RSpec.describe Booking, type: :model do
         expect(booking.errors[:start_date]).to be_present
     end
     it "cannot be created or approved if the item is not available" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu", role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password123")
         item   = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "unavailable")
         booking = Booking.new(
             item: item,
@@ -97,8 +97,8 @@ RSpec.describe Booking, type: :model do
         expect(booking.errors[:status]).to include("cannot be approved if item is unavailable")
     end
     it "transitions from requested -> approved when item is available" do
-        renter = User.create!(username: "isabelle", role: "renter")
-        owner  = User.create!(username: "erfu",     role: "owner")
+        renter = User.create!(username: "isabelle", role: "renter", email: "isa@example.com", password: "password123")
+        owner  = User.create!(username: "erfu",     role: "owner", email: "erfu@example.com", password: "password123")
         item   = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
 
         booking = Booking.create!(
