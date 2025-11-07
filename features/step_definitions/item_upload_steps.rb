@@ -67,10 +67,6 @@ When('I attach the file {string} to {string}') do |rel_path, label|
   attach_file(label, full)
 end
 
-When('I press {string}') do |btn|
-  click_button(btn)
-end
-
 # --- Then ------------------------------------------------------------------
 Then('I should see {string}') do |text|
   expect(page).to have_content(text)
