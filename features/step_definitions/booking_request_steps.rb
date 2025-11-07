@@ -53,6 +53,14 @@ When("I sign out") do
   @current_user = nil
 end
 
+When("I sign in as {string}") do |username|
+  @current_user = User.find_by(username: username)
+  raise "User #{username} not found" unless @current_user
+  if defined?(sign_in)
+    sign_in @current_user
+  end
+end
+
 When("I visit the owner dashboard and open the booking request for {string}") do |title|
   item = Item.find_by(title: title)
   @booking = Booking.find_by(item: item, owner: @current_user)
