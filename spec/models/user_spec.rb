@@ -24,5 +24,10 @@ RSpec.describe User, type: :model do
         u = User.create!(username: "erfu", role: "owner")
         expect(u.report_count).to eq(0)
     end
+    it "requires email" do
+      u = User.new(username: "lily", role: "renter", email: nil)
+      expect(u).not_to be_valid
+      expect(u.errors[:email]).to be_present
+    end
 end
 
