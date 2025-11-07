@@ -11,5 +11,18 @@ RSpec.describe "Sessions", type: :request do
       expect(response.body).to include("Password")
     end
   end
+  
+  describe "POST /login" do
+    it "redirects to dashboard and shows expected UI" do
+      post "/login", params: { email: "Kyle.jia@nyu.edu", password: "Team8IsTheBest123!" }
+      expect(response).to redirect_to("/dashboard")
+      follow_redirect!
+      expect(response.body).to include("Welcome back!")
+      expect(response.body).to include("Dashboard")
+      expect(response.body).to include("User Dashboard")
+    end
+  end
+
+  
 end
 
