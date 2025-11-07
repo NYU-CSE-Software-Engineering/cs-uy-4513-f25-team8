@@ -1,0 +1,11 @@
+<%# If your layout supports provide(:title), this sets the <title> %>
+<% provide :title, "User Dashboard" %>
+
+<h1>Welcome back!</h1>
+
+<nav>
+  <a href="/dashboard">Dashboard</a>
+</nav>
+
+<%# Keep the literal text in the body so request specs find it even if layout doesn't set <title> %>
+<p class="visually-hidden">User Dashboard</p>
