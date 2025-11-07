@@ -66,10 +66,6 @@ When("I type {string}") do |message_text|
   fill_in "message_body", with: message_text
 end
 
-When("I press {string}") do |button_text|
-  click_button button_text
-end
-
 Then("I should see my message appear in the chat window") do
   expect(page).to have_content(@message.body).or have_content("Hi! Is this camera available next weekend?")
 end
