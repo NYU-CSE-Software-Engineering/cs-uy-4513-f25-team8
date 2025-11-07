@@ -10,7 +10,7 @@ Given("the following item exists:") do |table|
   end
 end
 
-When("I sign in as {string}") do |username|
+Given("I am signed in as {string}") do |username|
   @current_user = User.find_by(username: username)
   raise "User #{username} not found" unless @current_user
   if defined?(sign_in)
