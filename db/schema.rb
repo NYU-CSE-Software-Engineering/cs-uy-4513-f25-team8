@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_000527) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_000856) do
   create_table "items", force: :cascade do |t|
     t.string "availability_status", default: "available", null: false
     t.datetime "created_at", null: false
+    t.integer "owner_id", null: false
     t.decimal "price", precision: 10, scale: 2, null: false
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_items_on_owner_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -27,4 +29,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_000527) do
     t.datetime "updated_at", null: false
     t.string "username"
   end
+
+  add_foreign_key "items", "users", column: "owner_id"
 end
