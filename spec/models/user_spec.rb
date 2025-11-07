@@ -36,5 +36,10 @@ RSpec.describe User, type: :model do
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:email]).to be_present
     end
+    it "is invalid without a password" do
+      u = User.new(username: "lily", role: "renter", email: "lily@example.com", password: nil)
+      expect(u).not_to be_valid
+      expect(u.errors[:password]).to be_present
+    end
 end
 
