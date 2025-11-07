@@ -1,3 +1,14 @@
+Given("the following users exist:") do |table|
+  table.hashes.each do |user_attrs|
+    User.create!(
+      username: user_attrs["username"],
+      email: user_attrs["email"],
+      password: user_attrs["password"],
+      role: user_attrs["role"]
+    )
+  end
+end
+
 Given("the following item exists:") do |table|
   table.hashes.each do |item_attrs|
     owner = User.find_by(username: item_attrs["owner"])
@@ -13,13 +24,14 @@ end
 Given("I am signed in as {string}") do |username|
   @current_user = User.find_by(username: username)
   raise "User #{username} not found" unless @current_user
-  if defined?(sign_in)
-    sign_in @current_user
-  end
 end
 
 When("I sign in as {string}") do |username|
   step "I am signed in as \"#{username}\""
+end
+
+When("I sign out") do
+  @current_user = nil
 end
 
 Given("I am on the item details page for {string}") do |title|
@@ -32,19 +44,39 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
   renter = @current_user
   owner = item.owner
 
-  @booking_response = post("/bookings", params: {
+  post "/bookings", params: {
     item_id: item.id,
     renter_id: renter.id,
     owner_id: owner.id,
     start_date: start_date,
     end_date: end_date
-  })
+  }
+
+  @booking = Booking.last
+  expect(response.body).to include("Booking request submitted")
 end
 
 Then("a booking should exist in the database with status {string}") do |expected_status|
   booking = Booking.last
   expect(booking).not_to be_nil
   expect(booking.status).to eq(expected_status)
+end
+
+When("I visit the owner dashboard and open the booking request for {string}") do |title|
+  item = Item.find_by(title: title)
+  @booking = Booking.find_by(item: item, owner: @current_user)
+  raise "Booking not found for #{title}" unless @booking
+end
+
+When("I click {string}") do |button_text|
+  case button_text
+  when "Approve Booking"
+    patch "/bookings/#{@booking.id}/approve"
+    @booking.reload
+    expect(response.body).to include("Booking approved")
+  else
+    raise "Unknown button action: #{button_text}"
+  end
 end
 
 Then("the booking's status should be {string}") do |expected_status|
@@ -54,23 +86,4 @@ end
 
 Then("the renter {string} should receive a notification {string}") do |_renter, message|
   expect(message).to eq("Your booking for Camera has been approved")
-end
-
-When("I sign out") do
-  @current_user = nil
-end
-
-When("I visit the owner dashboard and open the booking request for {string}") do |title|
-  item = Item.find_by(title: title)
-  @booking = Booking.find_by(item: item, owner: @current_user, renter: User.find_by(username: "isabelle"))
-  raise "Booking not found for #{title}" unless @booking
-end
-
-When("I click {string}") do |button_text|
-  case button_text
-  when "Approve Booking"
-    @booking_response = patch("/bookings/#{@booking.id}/approve")
-  else
-    raise "Unknown button action: #{button_text}"
-  end
 end
