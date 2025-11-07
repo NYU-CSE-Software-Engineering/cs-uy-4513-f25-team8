@@ -17,11 +17,11 @@ RSpec.describe User, type: :model do
         expect(u.errors[:role]).to be_present
     end
     it "defaults account_status to 'active'" do
-        u = User.create!(username: "jane", role: "renter")
+        u = User.create!(username: "jane", role: "renter", email: "jane@example.com")
         expect(u.account_status).to eq("active")
     end
     it "defaults report_count to 0" do
-        u = User.create!(username: "erfu", role: "owner")
+        u = User.create!(username: "erfu", role: "owner", email: "erfu@example.com")
         expect(u.report_count).to eq(0)
     end
     it "requires email" do
