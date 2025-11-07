@@ -29,5 +29,12 @@ RSpec.describe User, type: :model do
       expect(u).not_to be_valid
       expect(u.errors[:email]).to be_present
     end
+    it "is invalid if the email is not unique" do
+      User.create!(username: "first", role: "renter", email: "duplicate@example.com")
+      duplicate = User.new(username: "second", role: "owner", email: "duplicate@example.com")
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:email]).to be_present
+    end
 end
 
