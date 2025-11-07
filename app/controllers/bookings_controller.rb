@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
 
   def create
     booking = Booking.new(booking_params)
+    booking.status ||= :requested  # ensure default enum
 
     if booking.save
       render inline: "Booking request submitted"

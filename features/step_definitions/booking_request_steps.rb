@@ -13,6 +13,9 @@ end
 Given("I am signed in as {string}") do |username|
   @current_user = User.find_by(username: username)
   raise "User #{username} not found" unless @current_user
+  if defined?(sign_in)
+    sign_in @current_user
+  end
 end
 
 Given("I am on the item details page for {string}") do |title|
@@ -30,7 +33,8 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
     renter_id: renter.id,
     owner_id: owner.id,
     start_date: start_date,
-    end_date: end_date
+    end_date: end_date,
+    status: "requested"  # explicitly set to default
   })
 end
 
@@ -46,11 +50,6 @@ end
 
 When("I sign out") do
   @current_user = nil
-end
-
-When("I sign in as {string}") do |username|
-  @current_user = User.find_by(username: username)
-  raise "User #{username} not found" unless @current_user
 end
 
 When("I visit the owner dashboard and open the booking request for {string}") do |title|
