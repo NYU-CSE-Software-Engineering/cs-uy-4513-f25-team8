@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_033225) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_034231) do
   create_table "bookings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date"
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_033225) do
     t.string "account_status", default: "active", null: false
     t.datetime "created_at", null: false
     t.string "email"
+    t.string "password_digest"
     t.integer "report_count", default: 0, null: false
     t.string "role"
     t.datetime "updated_at", null: false

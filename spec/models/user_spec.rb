@@ -17,11 +17,11 @@ RSpec.describe User, type: :model do
         expect(u.errors[:role]).to be_present
     end
     it "defaults account_status to 'active'" do
-        u = User.create!(username: "jane", role: "renter", email: "jane@example.com")
+        u = User.create!(username: "jane", role: "renter", email: "jane@example.com", password: "password123")
         expect(u.account_status).to eq("active")
     end
     it "defaults report_count to 0" do
-        u = User.create!(username: "erfu", role: "owner", email: "erfu@example.com")
+        u = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password123")
         expect(u.report_count).to eq(0)
     end
     it "requires email" do
@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
       expect(u.errors[:email]).to be_present
     end
     it "is invalid if the email is not unique" do
-      User.create!(username: "first", role: "renter", email: "duplicate@example.com")
+      User.create!(username: "first", role: "renter", email: "duplicate@example.com", password: "password123")
       duplicate = User.new(username: "second", role: "owner", email: "duplicate@example.com")
 
       expect(duplicate).not_to be_valid
