@@ -26,10 +26,6 @@ When('I fill in {string} with {string}') do |field, value|
   fill_in field, with: value
 end
 
-When('I press {string}') do |button_text|
-  click_button(button_text)
-end
-
 Then('I should be where I was before clicking {string}') do |_button_text|
   expect(current_path).to eq(session[:return_to] || root_path)
 end

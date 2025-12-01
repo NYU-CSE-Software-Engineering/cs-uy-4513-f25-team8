@@ -74,8 +74,6 @@ When("I enter invalid payment information") do
   end
 end
 
-When("I press {string}") { |btn| click_button btn }
-
 Then("I should see the message {string}") { |msg| expect(page).to have_content(msg) }
 
 Then("I should see the payment status {string}") do |status|
