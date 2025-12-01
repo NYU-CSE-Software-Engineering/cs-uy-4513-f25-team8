@@ -1,0 +1,35 @@
+<h1>Create New Item</h1>
+
+<%= form_with model: @item, local: true do |f| %>
+  <div>
+    <%= f.label :title, "Title" %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div>
+    <%= f.label :price, "Price per day" %>
+    <%= f.number_field :price, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= f.label :category, "Category" %>
+    <%= f.select :category, ["Electronics", "Furniture", "Tools"] %>
+  </div>
+
+  <div>
+    <%= f.label :description, "Description" %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :availability_status, "Availability" %>
+    <%= f.select :availability_status, ["available", "unavailable"] %>
+  </div>
+
+  <div>
+    <%= f.label :image, "Item image" %>
+    <%= f.file_field :image %>
+  </div>
+
+  <%= f.submit "Create Item" %>
+<% end %>
