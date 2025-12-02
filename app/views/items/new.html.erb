@@ -1,35 +1,23 @@
-<h1>Create New Item</h1>
+<h1>New Item</h1>
 
-<%= form_with model: @item, local: true do |f| %>
-  <div>
-    <%= f.label :title, "Title" %>
-    <%= f.text_field :title %>
-  </div>
+<%= form_with model: @item, url: items_path, local: true do |f| %>
+  <%= f.label :title, "Title" %>
+  <%= f.text_field :title %>
 
-  <div>
-    <%= f.label :price, "Price per day" %>
-    <%= f.number_field :price, step: 0.01 %>
-  </div>
+  <%= f.label :price, "Price per day" %>
+  <%= f.number_field :price, step: 0.01 %>
 
-  <div>
-    <%= f.label :category, "Category" %>
-    <%= f.select :category, ["Electronics", "Furniture", "Tools"] %>
-  </div>
+  <%= f.label :category, "Category" %>
+  <%= f.select :category, ["Electronics", "Clothing", "Furniture"] %>
 
-  <div>
-    <%= f.label :description, "Description" %>
-    <%= f.text_area :description %>
-  </div>
+  <%= f.label :description, "Description" %>
+  <%= f.text_area :description %>
 
-  <div>
-    <%= f.label :availability_status, "Availability" %>
-    <%= f.select :availability_status, ["available", "unavailable"] %>
-  </div>
+  <%= f.label :availability_status, "Availability" %>
+  <%= f.select :availability_status, ["available", "unavailable"] %>
 
-  <div>
-    <%= f.label :image, "Item image" %>
-    <%= f.file_field :image %>
-  </div>
+  <%= f.label :image, "Item image" %>
+  <%= f.file_field :image %>
 
   <%= f.submit "Create Item" %>
 <% end %>

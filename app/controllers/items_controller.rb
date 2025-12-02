@@ -3,8 +3,7 @@ class ItemsController < ApplicationController
     @item = Item.new
   end
   def create
-    owner = User.find(params[:user_id]) # temporary for the test
-    @item = owner.items.build(item_params)
+    @item = current_user.items.build(item_params)
 
     if @item.save
       redirect_to @item, notice: "Item was successfully created"
@@ -12,6 +11,7 @@ class ItemsController < ApplicationController
       render :new
     end
   end
+
 
   def show
     @item = Item.find(params[:id])
