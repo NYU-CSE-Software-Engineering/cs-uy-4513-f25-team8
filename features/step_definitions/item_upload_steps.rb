@@ -12,36 +12,18 @@ end
 
 # --- Given -----------------------------------------------------------------
 Given("I am signed in as an item owner") do
+  @owner = User.create!(
+    username: "owner1",
+    email: "owner1@example.com",
+    password: "password123",
+    role: "owner"
+  )
 
-  unless Object.const_defined?(:User)
-
-    next
-  end
-
-  user_class = Object.const_get(:User)
-
-
-  attrs = { email: "owner@example.com", password: "password", password_confirmation: "password" }
-  attrs[:role] = "owner" if user_class.column_names.include?("role")
-
-  @owner = user_class.find_by(email: attrs[:email]) || user_class.create!(**attrs)
-
-  begin
-    if Rails.application.routes.url_helpers.respond_to?(:new_user_session_path)
-      visit Rails.application.routes.url_helpers.new_user_session_path
-    else
-      visit "/users/sign_in"
-    end
-
-    if page.has_field?("Email") && page.has_field?("Password")
-      fill_in "Email", with: @owner.email
-      fill_in "Password", with: "password"
-      click_button(/Log in|Sign in/i)
-    end
-  rescue
-
-  end
+  sign_in_for_test(@owner)
 end
+
+
+
 
 Given("I am on the new item page") do
 
@@ -52,9 +34,7 @@ rescue
 end
 
 # --- When ------------------------------------------------------------------
-When('I fill in {string} with {string}') do |label, value|
-  fill_in(label, with: value)
-end
+
 
 When('I select {string} from {string}') do |option, label|
   select(option, from: label)
