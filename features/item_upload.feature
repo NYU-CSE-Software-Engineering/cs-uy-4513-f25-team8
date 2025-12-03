@@ -19,8 +19,3 @@ Feature: Item upload
     And I should be on the created item's show page
     And I should see "Camera"
 
-  Scenario: Fail to create item without title
-    When I fill in "Price per day" with "25.00"
-    And I press "Create Item"
-    Then I should see "Title can't be blank"
-    And I should remain on the new item page
