@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   
   
   resources :bookings do
-    resources :payments, only: [:create, :show]
+    resources :payments, only: [:new, :create, :show]
   end
 
 
