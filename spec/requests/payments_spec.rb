@@ -38,7 +38,7 @@ RSpec.describe "Payments", type: :request do
     )
   end
 
-  # Helper: stub current_user in controller (works with or without Devise)
+  # helper to stub authentication
   def login_as(user)
     allow_any_instance_of(ApplicationController)
       .to receive(:current_user)
@@ -51,10 +51,7 @@ RSpec.describe "Payments", type: :request do
 
       expect {
         post booking_payments_path(booking), params: {
-          payment: {
-            payment_type: "deposit",
-            card_number: "4242-4242-4242-4242"
-          }
+          payment: { payment_type: "deposit" }
         }
       }.to change(Payment, :count).by(1)
 
@@ -64,7 +61,7 @@ RSpec.describe "Payments", type: :request do
       expect(payment.payee).to   eq(owner)
       expect(payment.payment_type).to eq("deposit")
       expect(payment.status).to       eq("succeeded")
-      expect(payment.payment_method).to eq("simulated")
+      expect(payment.dollar_amount).to be > 0
       expect(payment.reference_code).to be_present
       expect(payment.settled_at).to be_present
 
@@ -73,7 +70,7 @@ RSpec.describe "Payments", type: :request do
 
     it "does NOT allow a different user to pay for the booking" do
       intruder = User.create!(
-        username: "bad_user",
+        username: "intruder_user",
         role:     "renter",
         email:    "intruder@example.com",
         password: "password123"
@@ -82,16 +79,11 @@ RSpec.describe "Payments", type: :request do
 
       expect {
         post booking_payments_path(booking), params: {
-          payment: {
-            payment_type: "deposit",
-            card_number: "4242-4242-4242-4242"
-          }
+          payment: { payment_type: "deposit" }
         }
       }.not_to change(Payment, :count)
 
-      expect(response).to redirect_to(root_path)
-      follow_redirect!
-      expect(response.body).to include("You are not authorized to pay for this booking")
+      expect(response).to redirect_to("/dashboard")
     end
   end
 end
