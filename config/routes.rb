@@ -23,5 +23,11 @@ Rails.application.routes.draw do
 
   # item_upload
   resources :items, only: [:new, :create, :show]
+  
+  
+  resources :bookings do
+    resources :payments, only: [:new, :create, :show]
+  end
+
 
 end
