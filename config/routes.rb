@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
-  
+  root "items#index"
+
   get  "/login",     to: "sessions#new"
   post "/login",     to: "sessions#create"
   get  "/dashboard", to: "dashboards#show"
@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   post "/bookings", to: "bookings#create"
   patch "/bookings/:id/approve", to: "bookings#approve"
 
-  # item_upload
-  resources :items, only: [:new, :create, :show]
+  # item_upload and search
+  resources :items, only: [:new, :create, :show, :index]
 
 end

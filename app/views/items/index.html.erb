@@ -1,0 +1,57 @@
+<h1>Search Items</h1>
+
+<%= form_with url: items_path, method: :get, local: true do |f| %>
+  <div>
+    <%= f.label :keyword, "Keyword" %>
+    <%= f.text_field :keyword, value: params[:keyword] %>
+  </div>
+
+  <div>
+    <%= f.label :category, "Category" %>
+    <%= f.select :category, options_for_select([["All", ""], ["Electronics", "Electronics"], ["Clothing", "Clothing"], ["Furniture", "Furniture"]], params[:category]), {} %>
+  </div>
+
+  <div>
+    <%= f.label :start_date, "Start Date" %>
+    <%= f.text_field :start_date, value: params[:start_date] %>
+  </div>
+
+  <div>
+    <%= f.label :end_date, "End Date" %>
+    <%= f.text_field :end_date, value: params[:end_date] %>
+  </div>
+
+  <%= f.submit "Search" %>
+<% end %>
+
+<div class="search-results">
+  <% if @items.any? %>
+    <% @items.each do |item| %>
+      <div class="item-card">
+        <%= link_to item_path(item) do %>
+          <div class="item-name"><%= item.title %></div>
+
+          <% if item.image.attached? %>
+            <%= image_tag item.image %>
+          <% else %>
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="No image" />
+          <% end %>
+
+          <div class="item-price">
+            <%= number_to_currency(item.price) %> per day
+          </div>
+
+          <div class="item-owner">
+            Owner: <%= item.owner.email %>
+          </div>
+
+          <div class="item-availability">
+            Available: <%= item.availability_status %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p>No items found</p>
+  <% end %>
+</div>
