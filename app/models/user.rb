@@ -11,4 +11,5 @@ class User < ApplicationRecord
 
 
   attribute :account_status, :string, default: "active"
+  attribute :report_count, :integer, default: 0
 end

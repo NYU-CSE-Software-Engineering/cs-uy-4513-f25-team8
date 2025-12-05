@@ -36,3 +36,7 @@
 
 # Ignore generated logs
 /log/*
+
+
+.DS_Store
+**/.DS_Store
