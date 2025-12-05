@@ -16,6 +16,10 @@ Rails.application.routes.draw do
   post "/login",     to: "sessions#create"
   get  "/dashboard", to: "dashboards#show"
 
+  #Account creation route
+  get "/signup", to: "users#new", as: :signup
+  post "/users", to: "users#create"
+  root "home#index"
 
   # Booking routes
   post "/bookings", to: "bookings#create"

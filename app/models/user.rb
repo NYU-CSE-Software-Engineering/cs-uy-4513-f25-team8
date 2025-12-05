@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   ROLES = %w[renter owner admin].freeze
-  validates :username, presence: true
+  validates :username, presence: { message: "Account name is invalid" }
   validates :role, presence: true, inclusion: { in: ROLES }
   validates :email, presence: true, uniqueness: true
   has_many :items, foreign_key: :owner_id, dependent: :destroy
