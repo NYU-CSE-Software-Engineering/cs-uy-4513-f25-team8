@@ -5,7 +5,12 @@ require "uri"
 Given("I am a signed-in renter") do
   # If Devise exists, log in; otherwise just hit a page so the step isn't pending.
   if defined?(User)
-    @renter = User.create!(email: "renter#{SecureRandom.hex(4)}@example.com", password: "password")
+    @renter = User.create!(
+      email: "renter#{SecureRandom.hex(4)}@example.com",
+      password: "password",
+      username: "renter#{SecureRandom.hex(4)}",
+      role: "renter"
+    )
   end
 
   begin

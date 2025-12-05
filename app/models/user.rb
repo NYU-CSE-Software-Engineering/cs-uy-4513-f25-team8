@@ -4,7 +4,7 @@ class User < ApplicationRecord
     validates :username, presence: true
     validates :role, presence: true, inclusion: { in: ROLES }
     validates :email, presence: true, uniqueness: true
-    validates :password, presence: true
+    validates :password, presence: true, on: :create
     has_many :items, foreign_key: :owner_id, dependent: :destroy
     has_many :bookings_as_renter, class_name: "Booking", foreign_key: :renter_id, dependent: :destroy
     has_many :bookings_as_owner, class_name: "Booking", foreign_key: :owner_id, dependent: :destroy
