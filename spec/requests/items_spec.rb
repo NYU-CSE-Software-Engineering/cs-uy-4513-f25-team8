@@ -13,6 +13,8 @@ RSpec.describe "Items", type: :request do
     it "creates an item and redirects to the show page" do
       owner = User.create!(username: "owner1", email: "o@example.com", role: "owner", password: "password123")
 
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(owner)
+
       post "/items", params: {
         item: { title: "Camera", price: 25, description: "DSLR" },
         user_id: owner.id

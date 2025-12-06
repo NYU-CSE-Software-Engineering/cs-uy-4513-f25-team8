@@ -69,4 +69,12 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Allow request specs to simulate a logged-in user before Devise exists
+  config.before(:each, type: :request) do
+    allow_any_instance_of(ApplicationController)
+      .to receive(:current_user)
+            .and_return(User.first)
+  end
+
 end

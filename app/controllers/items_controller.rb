@@ -12,6 +12,10 @@ class ItemsController < ApplicationController
   end
 
   def create
+    unless current_user
+      return redirect_to login_path, alert: "You must be logged in to create a new item."
+    end
+
     @item = current_user.items.build(item_params)
 
     if @item.save
