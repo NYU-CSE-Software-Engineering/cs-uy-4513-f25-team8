@@ -1,0 +1,22 @@
+<h1>Payment for Booking</h1>
+
+<p>Item: <%= @item.title %></p>
+<p>Rental days: <%= @days %></p>
+
+<p>Rental Subtotal: $<%= @rental_subtotal %></p>
+<p>Deposit: $<%= @deposit_amount %></p>
+<p>Total: $<%= @total %></p>
+
+<%= form_with url: booking_payments_path(@booking), scope: :payment do |f| %>
+  <div>
+    <%= f.label :payment_type, "Payment type" %>
+    <%= f.select :payment_type,
+          options_for_select([["Deposit", "deposit"],
+                              ["Rental", "rental"],
+                              ["Deposit + Rental", "both"]]) %>
+  </div>
+
+  <div>
+    <%= f.submit "Submit Payment" %>
+  </div>
+<% end %>

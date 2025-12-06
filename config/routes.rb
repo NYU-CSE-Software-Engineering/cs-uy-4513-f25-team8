@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "items#index"
+  #root "items#index"     #commenting to resolve merge conflicts, will delete if sucessful don't want to mess too much up
 
   get  "/login",     to: "sessions#new"
   post "/login",     to: "sessions#create"
@@ -25,7 +25,14 @@ Rails.application.routes.draw do
   post "/bookings", to: "bookings#create"
   patch "/bookings/:id/approve", to: "bookings#approve"
 
-  # item_upload and search
+
+  # item_upload
   resources :items, only: [:new, :create, :show, :index]
+  
+  
+  resources :bookings do
+    resources :payments, only: [:new, :create, :show]
+  end
+
 
 end

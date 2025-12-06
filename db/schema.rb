@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_02_200133) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -65,8 +65,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_02_200133) do
     t.index ["owner_id"], name: "index_items_on_owner_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.integer "booking_id", null: false
+    t.datetime "created_at", null: false
+    t.decimal "dollar_amount", precision: 10, scale: 2, null: false
+    t.integer "payee_id", null: false
+    t.integer "payer_id", null: false
+    t.string "payment_method", default: "simulated", null: false
+    t.string "payment_type", null: false
+    t.string "reference_code"
+    t.datetime "settled_at"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_payments_on_booking_id"
+    t.index ["payee_id"], name: "index_payments_on_payee_id"
+    t.index ["payer_id"], name: "index_payments_on_payer_id"
+  end
+
   create_table "users", force: :cascade do |t|
-    t.string "account_status", default: "active", null: false
+    t.string "account_status"
     t.datetime "created_at", null: false
     t.string "email"
     t.string "password_digest"
@@ -83,4 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_02_200133) do
   add_foreign_key "bookings", "users", column: "owner_id"
   add_foreign_key "bookings", "users", column: "renter_id"
   add_foreign_key "items", "users", column: "owner_id"
+  add_foreign_key "payments", "bookings"
+  add_foreign_key "payments", "users", column: "payee_id"
+  add_foreign_key "payments", "users", column: "payer_id"
 end
