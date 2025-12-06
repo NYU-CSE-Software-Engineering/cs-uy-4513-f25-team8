@@ -1,4 +1,7 @@
 class ItemsController < ApplicationController
+  # Ensure user is logged in before certain actions
+  before_action :authenticate_user!, only: [:new, :create]
+
   def index
     @items = Item.all
     @items = @items.search_by_keyword(params[:keyword]) if params[:keyword].present?
@@ -12,6 +15,7 @@ class ItemsController < ApplicationController
   end
 
   def create
+    # current_user is guaranteed to exist because of authenticate_user!
     @item = current_user.items.build(item_params)
 
     if @item.save
