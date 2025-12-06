@@ -1,5 +1,6 @@
 # features/step_definitions/payments_steps.rb
 
+
 Given("a signed-in renter with an approved booking") do
   # --- Create renter and owner ---
   @renter = User.create!(

@@ -4,8 +4,10 @@
 
 <h1><%= @item.title %></h1>
 
-<p><%= @item.description %></p>
-<p>Price per day: <%= @item.price %></p>
+<p><strong>Description:</strong> <%= @item.description %></p>
+<p><strong>Price per day:</strong> <%= number_to_currency(@item.price) %> per day</p>
+<p><strong>Category:</strong> <%= @item.category %></p>
+<p><strong>Owner:</strong> <%= @item.owner.email %></p>
 
 <% if @item.image.attached? %>
   <%= image_tag @item.image %>

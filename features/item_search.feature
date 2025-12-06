@@ -22,7 +22,7 @@ Feature: Item search and filtering
     And I should see only listings available between "2025-03-10" and "2025-03-15"
 
   Scenario: Results show required fields
-    When I search for "camera"
+    When I search for items matching "camera"
     Then each result should display the item name
     And each result should display an image
     And each result should display the price per day
@@ -36,7 +36,7 @@ Feature: Item search and filtering
     Then I should see "No items found"
 
   Scenario: Clicking a result opens the details page
-    When I search for "camera"
+    When I search for items matching "camera"
     And I click on a result listing
     Then I should be on the item details page
     And I should see the item description

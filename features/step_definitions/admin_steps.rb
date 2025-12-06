@@ -116,9 +116,6 @@ Then("I should not see the user {string}") do |username|
   expect(page).to have_no_content(username)
 end
 
-Then("I should see the message {string}") do |message|
-  expect(page).to have_content(message)
-end
 
 Then("the user {string} should have account status {string} in the database") do |username, status|
   user = find_user(username)
