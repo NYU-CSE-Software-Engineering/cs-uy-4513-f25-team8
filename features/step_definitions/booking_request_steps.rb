@@ -28,8 +28,8 @@ Given("I am signed in as {string}") do |username|
   
   # Sign in via the browser
   visit new_user_session_path
-  fill_in 'Email', with: @current_user.email
-  fill_in 'Password', with: 'password123'
+  fill_in 'user_email', with: @current_user.email
+  fill_in 'user_password', with: 'password123'
   click_button 'Log in'
   
   sleep 0.5
@@ -43,6 +43,7 @@ end
 
 When("I sign out") do
   @current_user = nil
+  click_button 'Sign Out'
 end
 
 Given("I am on the item details page for {string}") do |title|
