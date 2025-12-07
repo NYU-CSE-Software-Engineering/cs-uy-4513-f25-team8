@@ -12,13 +12,22 @@ end
 
 # --- Given -----------------------------------------------------------------
 Given("I am signed in as an item owner") do
-  @owner = User.create!(
-    username: "owner1",
-    email: "owner1@example.com",
-    password: "password123",
-    role: "owner"
-  )
+  @owner = User.find_or_create_by!(username: "owner1") do |user|
+    user.email = "owner1@example.com"
+    user.password = "password123"
+    user.role = "owner"
+    user.account_status = "active"
+  end
+  @owner.update!(password: "password123") if @owner.encrypted_password.blank?
 
+  # Sign in via the browser
+  visit new_user_session_path
+  fill_in 'Email', with: @owner.email
+  fill_in 'Password', with: 'password123'
+  click_button 'Log in'
+  
+  sleep 0.5
+  
   sign_in_for_test(@owner)
 end
 
