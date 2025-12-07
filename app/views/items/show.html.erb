@@ -1,21 +1,56 @@
-<% if notice.present? %>
-  <p style="color: green;"><%= notice %></p>
-<% end %>
-
 <h1><%= @item.title %></h1>
 
-<p><strong>Description:</strong> <%= @item.description %></p>
-<p><strong>Price per day:</strong> <%= number_to_currency(@item.price) %> per day</p>
-<p><strong>Category:</strong> <%= @item.category %></p>
-<p><strong>Owner:</strong> <%= @item.owner.email %></p>
-
+<!-- IMAGE -->
 <% if @item.image.attached? %>
-  <%= image_tag @item.image %>
-<% end %>
-
-<% if user_signed_in? && current_user.role == 'admin' %>
-  <div style="margin-top: 20px;">
-    <%= button_to "Remove Listing", admin_item_path(@item), method: :delete,
-        class: "btn-danger" %>
+  <div style="margin-bottom: 20px;">
+    <%= image_tag @item.image, style: "max-width: 300px; border-radius: 8px;" %>
   </div>
 <% end %>
+
+<!-- DETAILS -->
+<p><strong>Price per day:</strong> <%= number_to_currency(@item.price) %></p>
+<p><strong>Description:</strong> <%= @item.description %></p>
+<p><strong>Category:</strong> <%= @item.category %></p>
+<p><strong>Availability:</strong> <%= @item.availability_status %></p>
+<p><strong>Owner:</strong> <%= @item.owner.username %></p>
+
+<hr>
+
+<!-- ACTION BUTTONS -->
+<div style="display: flex; gap: 15px; margin-top: 20px;">
+
+  <% if user_signed_in? %>
+
+    <% if current_user != @item.owner %>
+      <!-- REQUEST BOOKING -->
+      <%= link_to "Request Booking", "#",
+                  style: "padding: 10px 15px; background: #4CAF50; color: white; border-radius: 5px;" %>
+
+<% end %>
+
+    <!-- OWNER ONLY: EDIT + DELETE -->
+    <% if current_user == @item.owner %>
+      <%= link_to "Edit Item",
+                  edit_item_path(@item),
+                  style: "padding: 10px 15px; background: #007bff; color: white; border-radius: 5px;" %>
+
+      <%= button_to "Delete Item",
+                    item_path(@item),
+                    method: :delete,
+                    data: { confirm: "Are you sure?" },
+                    style: "padding: 10px 15px; background: #dc3545; color: white; border-radius: 5px;" %>
+    <% end %>
+
+    <!-- ADMIN REMOVE LISTING -->
+    <% if current_user.role == "admin" %>
+      <%= button_to "Remove Listing",
+                    admin_item_path(@item),
+                    method: :delete,
+                    style: "padding: 10px 15px; background: #dc3545; color: white; border-radius: 5px;" %>
+    <% end %>
+
+  <% else %>
+    <p>You must <%= link_to "sign in", new_user_session_path %> to request a booking.</p>
+  <% end %>
+
+</div>

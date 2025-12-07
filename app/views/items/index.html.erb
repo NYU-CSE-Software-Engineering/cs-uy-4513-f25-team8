@@ -1,57 +1,71 @@
-<h1>Search Items</h1>
+<h1>Marketplace</h1>
 
-<%= form_with url: items_path, method: :get, local: true do |f| %>
-  <div>
-    <%= f.label :keyword, "Keyword" %>
-    <%= f.text_field :keyword, value: params[:keyword] %>
-  </div>
+<!-- ========================= -->
+<!-- SEARCH BAR — stays at top -->
+<!-- ========================= -->
+<div style="margin-bottom: 25px; padding: 10px; background: #f7f7f7; border-radius: 8px;">
+  <%= form_with url: items_path, method: :get, local: true do |f| %>
 
-  <div>
-    <%= f.label :category, "Category" %>
-    <%= f.select :category, options_for_select([["All", ""], ["Electronics", "Electronics"], ["Clothing", "Clothing"], ["Furniture", "Furniture"]], params[:category]), {} %>
-  </div>
+    <div style="margin-bottom: 10px;">
+      <%= f.label :keyword, "Search Items" %><br>
+      <%= f.text_field :keyword, value: params[:keyword], style: "width: 100%; padding: 8px;" %>
+    </div>
 
-  <div>
-    <%= f.label :start_date, "Start Date" %>
-    <%= f.text_field :start_date, value: params[:start_date] %>
-  </div>
-
-  <div>
-    <%= f.label :end_date, "End Date" %>
-    <%= f.text_field :end_date, value: params[:end_date] %>
-  </div>
-
-  <%= f.submit "Search" %>
-<% end %>
-
-<div class="search-results">
-  <% if @items.any? %>
-    <% @items.each do |item| %>
-      <div class="item-card">
-        <%= link_to item_path(item) do %>
-          <div class="item-name"><%= item.title %></div>
-
-          <% if item.image.attached? %>
-            <%= image_tag item.image %>
-          <% else %>
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="No image" />
-          <% end %>
-
-          <div class="item-price">
-            <%= number_to_currency(item.price) %> per day
-          </div>
-
-          <div class="item-owner">
-            Owner: <%= item.owner.email %>
-          </div>
-
-          <div class="item-availability">
-            Available: <%= item.availability_status %>
-          </div>
-        <% end %>
+    <div style="display: flex; gap: 10px;">
+      <div>
+        <%= f.label :category %><br>
+        <%= f.select :category, ["Electronics", "Clothing", "Furniture", "Tools"],
+                     include_blank: "Any",
+                     selected: params[:category] %>
       </div>
-    <% end %>
-  <% else %>
-    <p>No items found</p>
+
+      <div>
+        <%= f.label :availability, "Available only" %><br>
+        <%= f.select :availability, [["Available", "available"], ["Unavailable", "unavailable"]],
+                     include_blank: "Any",
+                     selected: params[:availability] %>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <%= f.submit "Search", style: "padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 5px;" %>
+    </div>
+
+  <% end %>
+</div>
+
+
+
+<!-- ========================= -->
+<!-- ITEM LISTINGS -->
+<!-- ========================= -->
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+  <% @items.each do |item| %>
+    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white;">
+
+      <!-- TITLE -->
+      <h3><%= link_to item.title, item_path(item) %></h3>
+
+      <!-- IMAGE -->
+      <% if item.image.attached? %>
+        <%= image_tag item.image, style: "width: 100%; height: 180px; object-fit: cover; border-radius: 5px;" %>
+      <% end %>
+
+      <!-- PRICE -->
+      <p style="margin-top: 10px;">
+        <strong><%= number_to_currency(item.price) %> per day</strong>
+      </p>
+
+      <!-- OWNER -->
+      <p><strong>Owner:</strong> <%= item.owner.email %></p>
+
+      <!-- AVAILABILITY -->
+      <p><strong>Available:</strong> <%= item.availability_status %></p>
+
+      <!-- BUTTON -->
+      <%= link_to "See More", item_path(item),
+                  style: "display: inline-block; width: 100%; text-align: center; padding: 8px; background: #4CAF50; color: white; border-radius: 5px; margin-top: 10px;" %>
+    </div>
   <% end %>
 </div>
