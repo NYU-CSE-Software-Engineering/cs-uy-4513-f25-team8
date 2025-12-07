@@ -26,7 +26,7 @@ RSpec.describe "Account Creation", type: :request do
       follow_redirect!
 
       # Devise flash notice
-      expect(response.body).to include("Welcome! You have signed up successfully.")
+      expect(response.body).to include("Account successfully created")
     end
   end
 end
