@@ -1,11 +1,12 @@
 Given("the following users exist:") do |table|
   table.hashes.each do |user_attrs|
-    User.create!(
-      username: user_attrs["username"],
-      email: user_attrs["email"],
-      password: user_attrs["password"],
-      role: user_attrs["role"]
-    )
+    user = User.find_or_initialize_by(username: user_attrs["username"])
+    user.email = user_attrs["email"]
+    user.role = user_attrs["role"]
+    user.password = user_attrs["password"] || 'password123'
+    user.account_status = user_attrs["account_status"] || 'active'
+    user.report_count = user_attrs["report_count"].to_i if user_attrs["report_count"]
+    user.save!
   end
 end
 

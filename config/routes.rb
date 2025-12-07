@@ -30,5 +30,21 @@ Rails.application.routes.draw do
     resources :payments, only: [:new, :create, :show]
   end
 
+  # Admin namespace
+  namespace :admin do
+    resources :users, only: [:index, :show, :update]
+    resources :items, only: [:destroy]
+  end
+
+  # API namespace
+  namespace :api do
+    namespace :v1 do
+      namespace :admin do
+        post "ban", to: "admin#ban"
+        post "disputes/new", to: "disputes#create"
+        get "disputes", to: "disputes#index"
+      end
+    end
+  end
 
 end

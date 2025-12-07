@@ -1,6 +1,8 @@
 class Item < ApplicationRecord
     belongs_to :owner, class_name: "User"
     has_one_attached :image
+    has_many :disputes, dependent: :destroy
+    has_many :bookings, dependent: :destroy
 
     validates :title, presence: true
     validates :price, presence: true, numericality: { greater_than: 0 }

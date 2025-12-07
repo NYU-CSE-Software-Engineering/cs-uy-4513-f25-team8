@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_213431) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_07_000000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -51,6 +51,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_213431) do
     t.index ["item_id"], name: "index_bookings_on_item_id"
     t.index ["owner_id"], name: "index_bookings_on_owner_id"
     t.index ["renter_id"], name: "index_bookings_on_renter_id"
+  end
+
+  create_table "disputes", force: :cascade do |t|
+    t.integer "booking_id"
+    t.datetime "created_at", null: false
+    t.integer "created_by_id", null: false
+    t.text "details"
+    t.integer "item_id"
+    t.string "reason"
+    t.text "resolution_notes"
+    t.datetime "resolved_at"
+    t.integer "resolved_by_id"
+    t.string "status", default: "open"
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_disputes_on_booking_id"
+    t.index ["created_by_id"], name: "index_disputes_on_created_by_id"
+    t.index ["item_id"], name: "index_disputes_on_item_id"
+    t.index ["resolved_by_id"], name: "index_disputes_on_resolved_by_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -104,6 +122,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_213431) do
   add_foreign_key "bookings", "items"
   add_foreign_key "bookings", "users", column: "owner_id"
   add_foreign_key "bookings", "users", column: "renter_id"
+  add_foreign_key "disputes", "bookings"
+  add_foreign_key "disputes", "items"
+  add_foreign_key "disputes", "users", column: "created_by_id"
+  add_foreign_key "disputes", "users", column: "resolved_by_id"
   add_foreign_key "items", "users", column: "owner_id"
   add_foreign_key "payments", "bookings"
   add_foreign_key "payments", "users", column: "payee_id"
