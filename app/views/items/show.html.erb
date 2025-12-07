@@ -28,18 +28,7 @@
 
 <% end %>
 
-    <!-- OWNER ONLY: EDIT + DELETE -->
-    <% if current_user == @item.owner %>
-      <%= link_to "Edit Item",
-                  edit_item_path(@item),
-                  style: "padding: 10px 15px; background: #007bff; color: white; border-radius: 5px;" %>
 
-      <%= button_to "Delete Item",
-                    item_path(@item),
-                    method: :delete,
-                    data: { confirm: "Are you sure?" },
-                    style: "padding: 10px 15px; background: #dc3545; color: white; border-radius: 5px;" %>
-    <% end %>
 
     <!-- ADMIN REMOVE LISTING -->
     <% if current_user.role == "admin" %>
