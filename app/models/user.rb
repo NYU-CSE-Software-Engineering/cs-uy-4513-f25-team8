@@ -26,4 +26,23 @@ class User < ApplicationRecord
   def inactive_message
     account_status == 'disabled' ? :account_disabled : super
   end
+
+  # Rentals where the user is the renter
+  def active_rentals
+    bookings_as_renter.where(status: "approved").where("end_date >= ?", Date.today)
+  end
+
+  def past_rentals
+    bookings_as_renter.where(status: "approved").where("end_date < ?", Date.today)
+  end
+
+  # Items the user owns that are currently rented out
+  def active_loans
+    bookings_as_owner.where(owner: self, status: "approved").where("end_date >= ?", Date.today)
+  end
+
+  def past_loans
+    bookings_as_owner.where(owner: self, status: "approved").where("end_date < ?", Date.today)
+  end
+
 end

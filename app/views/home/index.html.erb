@@ -1,2 +1,85 @@
-<h1>Home</h1>
-<p>Sign Up</p>
+<% if !user_signed_in? %>
+
+  <div style="text-align: center; margin-top: 50px;">
+    <h1 style="font-size: 48px; margin-bottom: 10px;">Rent It!</h1>
+
+
+
+    <div style="margin-top: 30px;">
+      <%= button_to "Sign Up", new_user_registration_path, method: :get %>
+      <%= button_to "Sign In", new_user_session_path, method: :get %>
+    </div>
+  </div>
+
+
+
+<% else %>
+
+  <%# --- DASHBOARD FOR LOGGED-IN USERS --- %>
+
+  <% if current_user.role == "renter" %>
+    <h1>Your Rentals</h1>
+
+    <h2>Active Rentals</h2>
+    <% if @active_rentals.any? %>
+      <ul>
+        <% @active_rentals.each do |booking| %>
+          <li>
+            <%= link_to booking.item.title, booking.item %>
+            (until <%= booking.end_date %>)
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You have no active rentals.</p>
+    <% end %>
+
+    <h2>Past Rentals</h2>
+    <% if @past_rentals.any? %>
+      <ul>
+        <% @past_rentals.each do |booking| %>
+          <li>
+            <%= link_to booking.item.title, booking.item %>
+            (ended <%= booking.end_date %>)
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You have no past rentals.</p>
+    <% end %>
+
+  <% elsif current_user.role == "owner" %>
+
+    <h1>Your Items Being Rented Out</h1>
+
+    <h2>Active Loans</h2>
+    <% if @active_loans.any? %>
+      <ul>
+        <% @active_loans.each do |booking| %>
+          <li>
+            <%= link_to booking.item.title, booking.item %>
+            rented by <%= booking.renter.username %> until <%= booking.end_date %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No one is currently renting your items.</p>
+    <% end %>
+
+    <h2>Past Loans</h2>
+    <% if @past_loans.any? %>
+      <ul>
+        <% @past_loans.each do |booking| %>
+          <li>
+            <%= link_to booking.item.title, booking.item %>
+            previously rented by <%= booking.renter.username %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No past rentals.</p>
+    <% end %>
+
+  <% end %>
+
+<% end %>

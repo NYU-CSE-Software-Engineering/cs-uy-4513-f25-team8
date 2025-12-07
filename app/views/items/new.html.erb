@@ -8,13 +8,13 @@
   <%= f.number_field :price, step: 0.01 %>
 
   <%= f.label :category, "Category" %>
-  <%= f.select :category, ["Electronics", "Clothing", "Furniture"] %>
+  <%= f.select :category, ["----","Electronics", "Clothing", "Furniture", "Tools", "Other"] %>
 
   <%= f.label :description, "Description" %>
   <%= f.text_area :description %>
 
   <%= f.label :availability_status, "Availability" %>
-  <%= f.select :availability_status, ["available", "unavailable"] %>
+  <%= f.select :availability_status, ["----", "available", "unavailable"] %>
 
   <%= f.label :image, "Item image" %>
   <%= f.file_field :image %>

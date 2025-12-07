@@ -1,40 +1,76 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= content_for(:title) || "Item Rental" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Item Rental">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title><%= content_for(:title) || "Item Rental" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Item Rental">
+  <meta name="mobile-web-app-capable" content="yes">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= yield :head %>
+  <%= yield :head %>
 
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.png">
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+</head>
 
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-  </head>
+<body>
 
-  <body>
-    <% if notice.present? %>
-      <p style="color: green;"><%= notice %></p>
-    <% end %>
-    <% if alert.present? %>
-      <p style="color: red;"><%= alert %></p>
-    <% end %>
-    <% unless user_signed_in? %>
-      <%= button_to "Sign Up", new_user_registration_path, method: :get %>
-      <%= button_to "Sign In", new_user_session_path, method: :get %>
-    <% end %>
+<!-- Flash Messages (always visible) -->
+<% if notice.present? %>
+  <p style="color: green; margin: 10px;"><%= notice %></p>
+<% end %>
+
+<% if alert.present? %>
+  <p style="color: red; margin: 10px;"><%= alert %></p>
+<% end %>
+
+
+<!-- ============================= -->
+<!--        GLOBAL NAVBAR          -->
+<!-- ============================= -->
+<% if user_signed_in? || request.path != root_path %>
+  <nav style="background: #f2f2f2; padding: 10px 15px; display: flex; gap: 20px; align-items: center;">
+
+    <%= link_to "Home", root_path %>
+
     <% if user_signed_in? %>
-      <%= button_to "Sign Out", destroy_user_session_path, method: :delete %>
+      <!-- Renter + Owner + Admin -->
+      <%= link_to "Marketplace", items_path %>
+
+      <% if current_user.role == "owner" %>
+        <%= link_to "Add Item", new_item_path %>
+      <% end %>
+
+      <% if current_user.role == "admin" %>
+        <%= link_to "Admin Dashboard", admin_users_path %>
+      <% end %>
+
+      <%= link_to "Messages", "#" %>
+
+      <!-- Logout button -->
+      <%= button_to "Sign Out", destroy_user_session_path,
+                    method: :delete,
+                    form: { style: "display:inline; margin-left:auto;" } %>
+    <% else %>
+      <%= link_to "Sign Up", new_user_registration_path %>
+      <%= link_to "Sign In", new_user_session_path %>
     <% end %>
-     <%= yield %>
-      
-  </body>
+
+  </nav>
+<% end %>
+
+
+<!-- ============================= -->
+<!--        PAGE CONTENT           -->
+<!-- ============================= -->
+<div style="padding: 15px;">
+  <%= yield %>
+</div>
+
+</body>
 </html>
