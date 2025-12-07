@@ -1,11 +1,12 @@
 Feature: User Login
   Background:
-    Given I am on the login page
-    And I fill in the login field "email" with "kyle.jia@nyu.edu"
-    And I fill in the login field "password" with "Team8isTheBest123!"
+    Given the following users exist:
+      | username | email                | password           | role   |
+      | kyle     | kyle.jia@nyu.edu     | Team8isTheBest123! | renter |
+    And I am on the login page
+    And I fill in the login field "user_email" with "kyle.jia@nyu.edu"
+    And I fill in the login field "user_password" with "Team8isTheBest123!"
 
   Scenario: Successful login
     When I press "Log in"
-    Then I should see "Welcome back!"
-    And I should see the "Dashboard" link
-    And the page title should be "User Dashboard"
+    Then I should see "Signed in successfully."

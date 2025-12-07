@@ -1,13 +1,5 @@
 Rails.application.routes.draw do
-  # Devise routes - use custom registrations controller, keep sessions custom for now
-  devise_for :users, controllers: {
-    registrations: 'users/registrations'
-  }, skip: [:sessions]
-  
-  # Custom authentication routes for sessions
-  get  "/login", to: "sessions#new", as: :new_user_session
-  post "/login", to: "sessions#create", as: :user_session
-  
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
