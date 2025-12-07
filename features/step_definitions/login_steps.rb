@@ -3,7 +3,16 @@ Given("I am on the login page") do
 end
 
 Given("I fill in the login field {string} with {string}") do |field, value|
-  fill_in field, with: value
+  # Map field names to actual form field identifiers
+  field_id = case field.downcase
+             when 'email'
+               'email'
+             when 'password'
+               'password'
+             else
+               field.downcase
+             end
+  fill_in field_id, with: value
 end
 
 Then("I should see the {string} link") do |link_text|

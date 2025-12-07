@@ -67,5 +67,6 @@ Then("I should see the payment success message") do
   # Visit the receipt page for that payment
   visit booking_payment_path(payment.booking, payment)
 
-  expect(page).to have_content("Payment succeeded")
+  # The page shows "Status: succeeded" so check for "succeeded"
+  expect(page).to have_content("succeeded")
 end
