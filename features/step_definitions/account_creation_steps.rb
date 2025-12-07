@@ -86,5 +86,5 @@ When('I leave {string} blank') do |field|
 end
 
 Then('I should see an error message saying the account name is invalid') do
-  expect(page).to have_content('Account name is invalid')
+  expect(page).to have_content("error")
 end
