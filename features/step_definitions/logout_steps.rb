@@ -15,11 +15,6 @@ Then('I should not be signed in') do
   expect(page).to have_current_path(new_user_session_path).or eq(root_path)
 end
 
-Given('the successful logout scenario has run') do
-  step 'I click on the "Logout" link'
-  step 'I should be on the login page'
-end
-
 When('I attempt to visit {string}') do |path|
   visit path
 end

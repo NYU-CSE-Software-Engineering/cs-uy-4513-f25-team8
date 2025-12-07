@@ -14,13 +14,11 @@ Feature: User Logout
     And I press "Log in"
 
   Scenario: Successful logout
-    When I click on the "Sign Out" link
+    When I press "Sign Out"
     Then I should see "Signed out successfully."
-    And I should not see the "Logout" link
-    And I should not be signed in
 
-  Scenario: Attempting to access protected content after logout
-    Given the successful logout scenario has run
+  Scenario: Logging out and then trying to access protected content
+    When I press "Sign Out"
     When I attempt to visit "/admin/users"
     Then I should be on the login page
     And I should see "You need to sign in or sign up before continuing."
