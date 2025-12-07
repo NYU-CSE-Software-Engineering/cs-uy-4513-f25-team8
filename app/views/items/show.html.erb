@@ -12,3 +12,10 @@
 <% if @item.image.attached? %>
   <%= image_tag @item.image %>
 <% end %>
+
+<% if user_signed_in? && current_user.role == 'admin' %>
+  <div style="margin-top: 20px;">
+    <%= button_to "Remove Listing", admin_item_path(@item), method: :delete,
+        class: "btn-danger" %>
+  </div>
+<% end %>

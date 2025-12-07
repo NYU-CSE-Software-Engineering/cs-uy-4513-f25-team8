@@ -20,6 +20,7 @@ This project was developed for:
 - Kyle Jia
 - Isabelle Larson
 - Lily McAmis
+- Jing Qian
 
 ---
 

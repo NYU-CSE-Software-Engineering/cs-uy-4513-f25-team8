@@ -73,4 +73,6 @@ group :test do
   gem "capybara"
   gem "database_cleaner-active_record"
   gem 'simplecov', require: false
+  gem 'factory_bot_rails'
+  gem 'faker'
 end
