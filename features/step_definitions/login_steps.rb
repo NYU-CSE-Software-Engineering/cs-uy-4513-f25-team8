@@ -1,5 +1,5 @@
 Given("I am on the login page") do
-  visit "/login"
+  visit "/users/sign_in"
 end
 
 Given("I fill in the login field {string} with {string}") do |field, value|
