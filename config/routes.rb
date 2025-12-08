@@ -1,6 +1,24 @@
 Rails.application.routes.draw do
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # ----- CUSTOM PASSWORD RESET FLOW -----
+  get  "/password_reset",            to: "password_resets#username_form"
+  post "/password_reset/check",      to: "password_resets#verify_username"
+
+  get  "/password_reset/questions",  to: "password_resets#security_questions"
+  post "/password_reset/verify",     to: "password_resets#verify_answers"
+
+  get  "/password_reset/new",        to: "password_resets#new_password"
+  patch "/password_reset/update",    to: "password_resets#update_password"
+
+  # Security Questions Password-Reset Flow
+  post "/security/lookup", to: "security_questions#lookup", as: :security_questions_lookup
+  get  "/security/verify/:id", to: "security_questions#verify", as: :security_questions_verify
+  post "/security/check_answers/:id", to: "security_questions#check_answers", as: :security_questions_check_answers
+  get  "/security/reset_password/:id", to: "security_questions#reset_password", as: :security_questions_reset_password
+  patch "/security/update_password/:id", to: "security_questions#update_password", as: :security_questions_update_password
+
+  # ---------------------------------------
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
