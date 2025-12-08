@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Item Rental" %></title>
+    <title><%= content_for(:title) || "Rent It!" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Item Rental">
+    <meta name="application-name" content="Rent It!">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -17,24 +17,95 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
   <body>
-    <% if notice.present? %>
-      <p style="color: green;"><%= notice %></p>
-    <% end %>
-    <% if alert.present? %>
-      <p style="color: red;"><%= alert %></p>
-    <% end %>
-    <% unless user_signed_in? %>
-      <%= button_to "Sign Up", new_user_registration_path, method: :get %>
-      <%= button_to "Sign In", new_user_session_path, method: :get %>
-    <% end %>
-    <% if user_signed_in? %>
-      <%= button_to "Sign Out", destroy_user_session_path, method: :delete %>
-    <% end %>
-     <%= yield %>
-      
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="z-index: 1050;">
+      <div class="container">
+        <%= link_to root_path, class: "navbar-brand fw-bold" do %>
+          <i class="bi bi-box-seam me-2"></i>Rent It!
+        <% end %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <%= link_to "Browse Items", items_path, class: "nav-link" %>
+            </li>
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to "List Item", new_item_path, class: "nav-link" %>
+              </li>
+              <% if current_user.role == 'admin' %>
+                <li class="nav-item">
+                  <%= link_to "Admin", admin_users_path, class: "nav-link" %>
+                </li>
+              <% end %>
+            <% end %>
+          </ul>
+          <ul class="navbar-nav">
+            <% if user_signed_in? %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-person-circle me-1"></i><%= current_user.email %>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><%= link_to "Dashboard", dashboard_path, class: "dropdown-item" %></li>
+                  <li><%= link_to "Account Settings", edit_user_registration_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item", form: { class: "d-inline" } %></li>
+                </ul>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-light ms-2" %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+      <% if notice.present? %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="bi bi-check-circle me-2"></i><%= notice %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+      <% if alert.present? %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i><%= alert %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+      <%= yield %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+      <div class="container text-center">
+        <p class="text-muted mb-0">&copy; 2025 Rent It! - Item Rental SaaS Platform</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
 </html>

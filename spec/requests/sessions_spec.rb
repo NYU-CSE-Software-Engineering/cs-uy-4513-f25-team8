@@ -6,7 +6,7 @@ RSpec.describe "Sessions", type: :request do
     it "renders the login page with expected fields" do
       get new_user_session_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Log in")
+      expect(response.body).to include("Welcome Back")
       expect(response.body).to include("Email")
       expect(response.body).to include("Password")
     end
@@ -35,8 +35,8 @@ RSpec.describe "Sessions", type: :request do
       expect(response).to redirect_to(root_path)
       follow_redirect!
 
-      # UI expectations
-      expect(response.body).to include("Home")
+      # UI expectations - check for home page content
+      expect(response.body).to include("Welcome to Rent It!")
     end
   end
   

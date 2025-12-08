@@ -1,9 +1,199 @@
 <% provide :title, "User Dashboard" %>
 
-<h1>Welcome back!</h1>
+<div class="row mb-4">
+  <div class="col-12">
+    <h1 class="display-5 fw-bold mb-2">
+      <i class="bi bi-speedometer2 me-2 text-primary"></i>Welcome back, <%= current_user.username || current_user.email %>!
+    </h1>
+    <p class="text-muted">Manage your items, bookings, and account</p>
+  </div>
+</div>
 
-<nav>
-  <a href="/dashboard">Dashboard</a>
-</nav>
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span style="font-size: 1.75rem; line-height: 1;">📦</span>
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h3 class="mb-0 fw-bold"><%= @items.count %></h3>
+            <p class="text-muted mb-0">Listed Items</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <%= link_to "View All", items_path, class: "btn btn-sm btn-outline-primary w-100" %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span style="font-size: 1.75rem; line-height: 1;">🛒</span>
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h3 class="mb-0 fw-bold"><%= @bookings_as_renter.count %></h3>
+            <p class="text-muted mb-0">My Rentals</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <%= link_to "View Rentals", bookings_path, class: "btn btn-sm btn-outline-success w-100" %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span style="font-size: 1.75rem; line-height: 1;">👍</span>
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h3 class="mb-0 fw-bold"><%= @bookings_as_owner.count %></h3>
+            <p class="text-muted mb-0">Booking Requests</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <%= link_to "View Requests", bookings_path, class: "btn btn-sm btn-outline-info w-100" %>
+      </div>
+    </div>
+  </div>
+</div>
 
-<p class="visually-hidden">User Dashboard</p>
+<div class="row g-4">
+  <!-- My Listed Items -->
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">
+          <i class="bi bi-box-seam me-2 text-primary"></i>My Listed Items
+        </h5>
+        <%= link_to new_item_path, class: "btn btn-sm btn-primary" do %>
+          <i class="bi bi-plus-circle me-1"></i>Add New
+        <% end %>
+      </div>
+      <div class="card-body">
+        <% if @items.any? %>
+          <div class="list-group list-group-flush">
+            <% @items.each do |item| %>
+              <div class="list-group-item border-0 px-0">
+                <div class="d-flex align-items-center">
+                  <% if item.image.attached? %>
+                    <%= image_tag item.image, class: "rounded me-3", style: "width: 60px; height: 60px; object-fit: cover;" %>
+                  <% else %>
+                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                      <i class="bi bi-image text-muted"></i>
+                    </div>
+                  <% end %>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">
+                      <%= link_to item.title, item_path(item), class: "text-decoration-none" %>
+                    </h6>
+                    <small class="text-muted">
+                      <%= number_to_currency(item.price) %>/day
+                      <span class="badge bg-<%= item.availability_status == 'available' ? 'success' : item.availability_status == 'pending' ? 'warning' : 'secondary' %> ms-2">
+                        <%= item.availability_status.capitalize %>
+                      </span>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+            <p class="text-muted">You haven't listed any items yet.</p>
+            <%= link_to "List Your First Item", new_item_path, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Rentals -->
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0 fw-bold">
+          <i class="bi bi-cart-check me-2 text-success"></i>My Rentals
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @bookings_as_renter.any? %>
+          <div class="list-group list-group-flush">
+            <% @bookings_as_renter.each do |booking| %>
+              <div class="list-group-item border-0 px-0">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">
+                      <%= link_to booking.item.title, item_path(booking.item), class: "text-decoration-none" %>
+                    </h6>
+                    <small class="text-muted">
+                      <%= booking.start_date.strftime("%b %d") %> - <%= booking.end_date.strftime("%b %d, %Y") %>
+                    </small>
+                    <br>
+                    <span class="badge bg-<%= booking.status == 'approved' ? 'success' : booking.status == 'declined' ? 'danger' : 'warning' %> mt-1">
+                      <%= booking.status.capitalize %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="bi bi-cart-x display-4 text-muted mb-3"></i>
+            <p class="text-muted">You haven't rented any items yet.</p>
+            <%= link_to "Browse Items", items_path, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0 fw-bold">
+          <i class="bi bi-lightning-charge me-2 text-warning"></i>Quick Actions
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <%= link_to new_item_path, class: "btn btn-outline-primary w-100" do %>
+              <i class="bi bi-plus-circle me-2"></i>List New Item
+            <% end %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to items_path, class: "btn btn-outline-success w-100" do %>
+              <i class="bi bi-search me-2"></i>Browse Items
+            <% end %>
+          </div>
+          <div class="col-md-4">
+            <%= link_to edit_user_registration_path, class: "btn btn-outline-info w-100" do %>
+              <i class="bi bi-gear me-2"></i>Account Settings
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

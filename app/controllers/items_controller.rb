@@ -1,6 +1,8 @@
 class ItemsController < ApplicationController
   # Ensure user is logged in before certain actions
-  before_action :authenticate_user!, only: [:new, :create]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_item, only: [:show, :edit, :update, :destroy]
+  before_action :ensure_owner, only: [:edit, :update, :destroy]
 
   def index
     @items = Item.all
@@ -26,12 +28,37 @@ class ItemsController < ApplicationController
   end
 
   def show
-    @item = Item.find(params[:id])
+  end
+
+  def edit
+  end
+
+  def update
+    if @item.update(item_params)
+      redirect_to @item, notice: "Item was successfully updated"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @item.destroy
+    redirect_to items_path, notice: "Item was successfully deleted"
   end
 
   private
 
+  def set_item
+    @item = Item.find(params[:id])
+  end
+
+  def ensure_owner
+    unless @item.owner_id == current_user.id
+      redirect_to @item, alert: "You are not authorized to perform this action."
+    end
+  end
+
   def item_params
-    params.require(:item).permit(:title, :price, :description, :availability_status, :category, :image)
+    params.require(:item).permit(:title, :price, :description, :availability_status, :category, :image, :available_from, :available_to, :payment_methods, :deposit_amount)
   end
 end

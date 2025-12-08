@@ -7,20 +7,25 @@ RSpec.describe "Bookings", type: :request do
       # Setup: create users and item
       renter = User.create!(username: "isabelle", role: "renter", email: "isabele@example.com", password: "password")
       owner = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password")
-      item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
+      item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available", payment_methods: "credit_card", deposit_amount: 0)
+
+      # Sign in as renter
+      sign_in renter
 
       # Make the POST request
       post "/bookings", params: {
         item_id: item.id,
-        renter_id: renter.id,
-        owner_id: owner.id,
-        start_date: "2025-03-21",
-        end_date: "2025-06-21"
+        booking: {
+          start_date: "2025-03-21",
+          end_date: "2025-06-21"
+        }
       }
 
-      # Verify response
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Booking request submitted")
+      # Verify response - should redirect after successful creation
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(booking_path(Booking.last))
+      follow_redirect!
+      expect(response.body).to include("Booking request submitted successfully!")
 
       # Verify booking was created in database
       booking = Booking.last
@@ -39,7 +44,7 @@ RSpec.describe "Bookings", type: :request do
       # Setup: create users, item, and a requested booking
       renter = User.create!(username: "isabelle", role: "renter", email: "isabelle@example.com", password: "password")
       owner = User.create!(username: "erfu", role: "owner", email: "erfu@example.com", password: "password")
-      item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available")
+      item = Item.create!(title: "Camera", price: 25.0, owner: owner, availability_status: "available", payment_methods: "credit_card", deposit_amount: 0)
       booking = Booking.create!(
         item: item,
         renter: renter,
@@ -52,12 +57,17 @@ RSpec.describe "Bookings", type: :request do
       # Verify initial status
       expect(booking.status).to eq("requested")
 
+      # Sign in as owner to approve
+      sign_in owner
+
       # Make the PATCH request to approve
       patch "/bookings/#{booking.id}/approve"
 
-      # Verify response
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Booking approved")
+      # Verify response - should redirect after successful approval
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(bookings_path)
+      follow_redirect!
+      expect(response.body).to include("Booking approved successfully!")
 
       # Verify booking status was updated in database
       booking.reload

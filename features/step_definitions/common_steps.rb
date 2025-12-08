@@ -7,6 +7,14 @@ Given('I am a signed-in renter') do
     user.role = 'renter'
     user.account_status = 'active'
   end
+  @renter.update!(password: 'password123') if @renter.encrypted_password.blank?
+  
+  # Sign in via browser
+  visit new_user_session_path
+  fill_in 'Email', with: @renter.email
+  fill_in 'Password', with: 'password123'
+  click_button 'Sign In'
+  sleep 0.5
   
   sign_in_for_test(@renter)
   visit root_path

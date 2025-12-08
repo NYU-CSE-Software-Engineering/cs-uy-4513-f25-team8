@@ -21,7 +21,9 @@ Given("a signed-in renter with an approved booking") do
   @item = Item.create!(
     title: "Camera",
     price: 50.0,
-    owner: @owner
+    owner: @owner,
+    payment_methods: "credit_card",
+    deposit_amount: 0
   )
 
   @booking = Booking.create!(
@@ -29,11 +31,18 @@ Given("a signed-in renter with an approved booking") do
     renter:     @renter,
     owner:      @owner,
     start_date: Date.today,
-    end_date:   Date.today + 3
+    end_date:   Date.today + 3,
+    status:     :approved
   )
 
-  # No explicit login needed here:
-  # current_user is overridden in Cucumber to be the renter
+  # Sign in as renter via browser
+  visit new_user_session_path
+  fill_in 'Email', with: @renter.email
+  fill_in 'Password', with: 'password123'
+  click_button 'Sign In'
+  sleep 0.5
+  
+  sign_in_for_test(@renter)
 end
 
 When("I visit the payment page for that booking") do
@@ -51,8 +60,18 @@ Given("I am on the payment page for that booking") do
 end
 
 When("I choose {string} as the payment type") do |type|
-  # Label in app/views/payments/new.html.erb must be "Payment type"
-  select type, from: "Payment type"
+  # Map test values to actual select option text
+  option_text = case type
+                when "Deposit"
+                  "Deposit Only"
+                when "Rental"
+                  "Rental Fee Only"
+                when "Full Payment", "Both"
+                  "Deposit + Rental (Full Payment)"
+                else
+                  type
+                end
+  select option_text, from: "Payment Type"
 end
 
 When("I submit the payment form") do
