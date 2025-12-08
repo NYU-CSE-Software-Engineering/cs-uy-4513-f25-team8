@@ -9,13 +9,6 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :role, presence: true, inclusion: { in: ROLES }
 
-  unless Rails.env.test?
-    validates :security_question_1, :security_question_2,
-              :security_answer_1, :security_answer_2,
-              presence: true
-  end
-
-
   # Associations
   has_many :items, foreign_key: :owner_id, dependent: :destroy
   has_many :bookings_as_renter, class_name: "Booking", foreign_key: :renter_id, dependent: :destroy

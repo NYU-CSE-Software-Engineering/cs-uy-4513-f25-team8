@@ -55,30 +55,6 @@
               <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control form-control-lg", placeholder: "Confirm your password", required: true %>
             </div>
 
-            <!-- SECURITY QUESTIONS -->
-            <hr class="mt-4">
-
-            <div class="col-12">
-              <%= f.label :security_question_1, "Security Question 1", class: "form-label fw-semibold" %>
-              <%= f.text_field :security_question_1, class: "form-control form-control-lg", placeholder: "e.g., What is your favorite childhood pet's name?", required: true %>
-            </div>
-
-            <div class="col-12">
-              <%= f.label :security_answer_1, "Answer", class: "form-label fw-semibold" %>
-              <%= f.text_field :security_answer_1, class: "form-control form-control-lg", placeholder: "Enter your answer", required: true %>
-            </div>
-
-            <div class="col-12 mt-3">
-              <%= f.label :security_question_2, "Security Question 2", class: "form-label fw-semibold" %>
-              <%= f.text_field :security_question_2, class: "form-control form-control-lg", placeholder: "e.g., What is the street you grew up on?", required: true %>
-            </div>
-
-            <div class="col-12">
-              <%= f.label :security_answer_2, "Answer", class: "form-label fw-semibold" %>
-              <%= f.text_field :security_answer_2, class: "form-control form-control-lg", placeholder: "Enter your answer", required: true %>
-            </div>
-
-
             <!-- Submit Button -->
             <div class="col-12 mt-3">
               <div class="d-grid">
