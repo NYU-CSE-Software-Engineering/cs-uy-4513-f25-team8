@@ -8,9 +8,17 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
+    extra_params = [
+      :username,
+      :role,
+      :security_question_1,
+      :security_question_2,
+      :security_answer_1,
+      :security_answer_2
+    ]
     # Permit custom fields for sign_up and account_update
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :role])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:username, :role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: extra_params)
+    devise_parameter_sanitizer.permit(:account_update, keys: extra_params)
   end
 
   # Changes to the importmap will invalidate the etag for HTML responses
