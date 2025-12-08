@@ -17,7 +17,9 @@ Given("the following item exists:") do |table|
       title: item_attrs["title"],
       owner: owner,
       price: 25.0,
-      availability_status: item_attrs["availability_status"]
+      availability_status: item_attrs["availability_status"],
+      payment_methods: "credit_card",
+      deposit_amount: 0
     )
   end
 end
@@ -28,9 +30,9 @@ Given("I am signed in as {string}") do |username|
   
   # Sign in via the browser
   visit new_user_session_path
-  fill_in 'user_email', with: @current_user.email
-  fill_in 'user_password', with: 'password123'
-  click_button 'Log in'
+  fill_in 'Email', with: @current_user.email
+  fill_in 'Password', with: 'password123'
+  click_button 'Sign In'
   
   sleep 0.5
   
@@ -59,7 +61,11 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
   visit item_path(item)
   
   # Fill in booking form if it exists, otherwise make direct POST
-  if page.has_field?('Start Date') && page.has_field?('End Date')
+  if page.has_field?('Rental Start Date') && page.has_field?('Rental End Date')
+    fill_in 'Rental Start Date', with: start_date
+    fill_in 'Rental End Date', with: end_date
+    click_button 'Request Booking'
+  elsif page.has_field?('Start Date') && page.has_field?('End Date')
     fill_in 'Start Date', with: start_date
     fill_in 'End Date', with: end_date
     click_button 'Request Booking'
@@ -67,10 +73,10 @@ When("I request the item {string} for {string} to {string}") do |title, start_da
     # Direct POST request for booking
     page.driver.post "/bookings", {
       item_id: item.id,
-      renter_id: renter.id,
-      owner_id: owner.id,
-      start_date: start_date,
-      end_date: end_date
+      booking: {
+        start_date: start_date,
+        end_date: end_date
+      }
     }
   end
 

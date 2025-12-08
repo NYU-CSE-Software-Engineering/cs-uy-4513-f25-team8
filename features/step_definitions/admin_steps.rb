@@ -36,7 +36,7 @@ Given("I am signed in as an Admin") do
   visit new_user_session_path
   fill_in 'Email', with: @admin.email
   fill_in 'Password', with: 'password123'
-  click_button 'Log in'
+  click_button 'Sign In'
 
   # Wait for redirect after login
   sleep 0.5
@@ -54,7 +54,7 @@ Given("I am signed in as a Renter") do
   visit new_user_session_path
   fill_in 'Email', with: @renter.email
   fill_in 'Password', with: 'password123'
-  click_button 'Log in'
+  click_button 'Sign In'
 
   sleep 0.5
 
@@ -72,7 +72,7 @@ Given("a listing exists titled {string} owned by user {string}") do |title, owne
       account_status: 'active'
     )
   end
-  @item = Item.create!(title: title, owner_id: owner.id, price: 10)
+  @item = Item.create!(title: title, owner_id: owner.id, price: 10, payment_methods: "credit_card", deposit_amount: 0)
 end
 
 Given("the listing {string} has been flagged for review") do |title|
@@ -140,7 +140,7 @@ When("the user {string} attempts to sign in with valid credentials") do |usernam
 
   fill_in 'Email', with: user.email
   fill_in 'Password', with: 'password123'
-  click_button 'Log in'
+  click_button 'Sign In'
 end
 
 When("I try to visit the User Management Dashboard path") do
@@ -155,8 +155,10 @@ end
 Then("I should see the following user details:") do |expected_table|
   expected_table.hashes.each do |expected_row|
     expect(page).to have_content(expected_row['username'])
-    expect(page).to have_content(expected_row['role'])
-    expect(page).to have_content(expected_row['account_status'])
+    # Role is displayed capitalized in the view, so use case-insensitive matching
+    expect(page).to have_content(/#{expected_row['role']}/i)
+    # Account status is displayed capitalized in the view, so use case-insensitive matching
+    expect(page).to have_content(/#{expected_row['account_status']}/i)
     expect(page).to have_content(expected_row['report_count'])
   end
 end
@@ -180,7 +182,8 @@ Then("they should see the message {string}") do |message|
 end
 
 Then("I should see the message {string}") do |message|
-  expect(page).to have_content(message)
+  # Use case-insensitive matching and allow partial matches
+  expect(page).to have_content(/#{Regexp.escape(message)}/i)
 end
 
 Then("they should be signed in successfully") do

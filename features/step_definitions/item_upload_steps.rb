@@ -24,7 +24,7 @@ Given("I am signed in as an item owner") do
   visit new_user_session_path
   fill_in 'Email', with: @owner.email
   fill_in 'Password', with: 'password123'
-  click_button 'Log in'
+  click_button 'Sign In'
   
   sleep 0.5
   
@@ -46,14 +46,43 @@ end
 
 
 When('I select {string} from {string}') do |option, label|
-  select(option, from: label)
+  # Map "Availability" to "Current Status" as that's the actual label in the form
+  actual_label = label == "Availability" ? "Current Status" : label
+  begin
+    select(option, from: actual_label)
+  rescue Capybara::ElementNotFound
+    # Try using the field name if label doesn't work
+    if label == "Availability"
+      select(option, from: 'item_availability_status')
+    else
+      select(option, from: label)
+    end
+  end
 end
 
 When('I attach the file {string} to {string}') do |rel_path, label|
   full = Rails.root.join(rel_path)
   FileUtils.mkdir_p(File.dirname(full))
   File.write(full, "fake image bytes") unless File.exist?(full)  # placeholder so the path exists
-  attach_file(label, full)
+  # Try different approaches to find the file field
+  # The field has ID "imageInput" and label "Item Image"
+  begin
+    # Try by ID first (most reliable)
+    attach_file('imageInput', full)
+  rescue Capybara::ElementNotFound
+    begin
+      # Try by exact label "Item Image"
+      attach_file("Item Image", full)
+    rescue Capybara::ElementNotFound
+      begin
+        # Try by original label parameter
+        attach_file(label, full)
+      rescue Capybara::ElementNotFound
+        # Try by field name (Rails form helper creates item[image])
+        attach_file('item[image]', full)
+      end
+    end
+  end
 end
 
 # --- Then ------------------------------------------------------------------

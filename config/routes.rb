@@ -17,23 +17,26 @@ Rails.application.routes.draw do
 
   root "home#index"
 
-  # Booking routes
-  post "/bookings", to: "bookings#create"
-  patch "/bookings/:id/approve", to: "bookings#approve"
-
-
   # item_upload
-  resources :items, only: [:new, :create, :show, :index]
+  resources :items, only: [:new, :create, :show, :index, :edit, :update, :destroy]
   
-  
+  # Booking routes
   resources :bookings do
+    member do
+      patch :approve
+      patch :decline
+    end
     resources :payments, only: [:new, :create, :show]
   end
+
+  # Contact routes
+  resources :contacts, only: [:new, :create]
 
   # Admin namespace
   namespace :admin do
     resources :users, only: [:index, :show, :update]
     resources :items, only: [:destroy]
+    resources :contacts, only: [:index, :show]
   end
 
   # API namespace

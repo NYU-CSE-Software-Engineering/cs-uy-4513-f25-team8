@@ -5,10 +5,10 @@ end
 Given("I fill in the login field {string} with {string}") do |field, value|
   # Map field names to actual form field identifiers
   field_id = case field.downcase
-             when 'email'
-               'email'
-             when 'password'
-               'password'
+             when 'user_email', 'email'
+               'user_email'
+             when 'user_password', 'password'
+               'user_password'
              else
                field.downcase
              end
