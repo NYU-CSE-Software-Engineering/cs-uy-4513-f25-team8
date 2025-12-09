@@ -1,6 +1,10 @@
 FactoryBot.define do
   factory :user do
-    username { Faker::Internet.username }
+    username do
+      uname = Faker::Internet.username(specifier: 6..12, separators: ['_']).gsub(/[^a-zA-Z0-9_]/, '')
+      uname = "user_#{uname}" unless uname.match?(/\A[a-zA-Z]/)
+      uname[0..19]
+    end
     email { Faker::Internet.email }
     password { "password123" }
     role { "renter" }
