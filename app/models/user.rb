@@ -5,8 +5,8 @@ class User < ApplicationRecord
 
   # Roles
   ROLES = %w[renter owner admin].freeze
-  validates :username, presence: true, uniqueness: { case_sensitive: false }
-  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }, format: { with: /\A[a-zA-Z][a-zA-Z0-9_]*\z/ }, length: { maximum: 20 }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/}
   validates :role, presence: true, inclusion: { in: ROLES }
 
   unless Rails.env.test?
