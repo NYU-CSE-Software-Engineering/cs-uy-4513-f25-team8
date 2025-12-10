@@ -4,13 +4,6 @@ class PaymentsController < ApplicationController
 
   # GET /bookings/:booking_id/payments/new
   def new
-    current = current_user
-    unless current == @booking.renter
-      redirect_to "/dashboard",
-                  alert: "You are not authorized to pay for this booking"
-      return
-    end
-
     @item = @booking.item
     @days = (@booking.end_date - @booking.start_date).to_i
 
@@ -22,6 +15,7 @@ class PaymentsController < ApplicationController
                        end
     @total = @rental_subtotal + @deposit_amount
   end
+
 
   # POST /bookings/:booking_id/payments
   def create

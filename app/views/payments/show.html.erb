@@ -1,5 +1,11 @@
 <h1>Payment Receipt</h1>
 
+<% if @payment.status == "succeeded" %>
+  <p>Payment succeeded</p>
+<% else %>
+  <p>Payment failed</p>
+<% end %>
+
 <p>Status: <%= @payment.status %></p>
 <p>Type: <%= @payment.payment_type %></p>
 <p>Amount: $<%= @payment.dollar_amount %></p>
