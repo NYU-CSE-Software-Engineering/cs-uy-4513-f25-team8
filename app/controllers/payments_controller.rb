@@ -8,11 +8,7 @@ class PaymentsController < ApplicationController
     @days = (@booking.end_date - @booking.start_date).to_i
 
     @rental_subtotal = (@item.price || 0) * @days
-    @deposit_amount  = if @item.respond_to?(:deposit_amount) && @item.deposit_amount.present?
-                         @item.deposit_amount
-                       else
-                         0
-                       end
+    @deposit_amount  = @item.deposit_amount || 0
     @total = @rental_subtotal + @deposit_amount
   end
 
@@ -28,23 +24,57 @@ class PaymentsController < ApplicationController
       return
     end
 
-    payment = @booking.payments.build(
-      payer:         current,
-      payee:         @booking.owner,
-      payment_type:  payment_params[:payment_type],   # "deposit"
-      dollar_amount: determine_amount(payment_params[:payment_type]),
-      status:        "succeeded"
-    )
+    payment_type = payment_params[:payment_type]
 
-    # Required for succeeded payments
-    payment.reference_code = SecureRandom.hex(8)
-    payment.settled_at     = Time.current
+    # Handle "both" by creating two separate payments
+    if payment_type == "both"
+      # Create deposit payment
+      deposit_payment = @booking.payments.build(
+        payer:         current,
+        payee:         @booking.owner,
+        payment_type:  "deposit",
+        dollar_amount: determine_amount("deposit"),
+        status:        "succeeded",
+        reference_code: SecureRandom.hex(8),
+        settled_at:     Time.current
+      )
+      deposit_payment.save!
 
-    # IMPORTANT: use bang so test fails loudly if validations fail
-    payment.save!
+      # Create rental payment
+      rental_payment = @booking.payments.build(
+        payer:         current,
+        payee:         @booking.owner,
+        payment_type:  "rental",
+        dollar_amount: determine_amount("rental"),
+        status:        "succeeded",
+        reference_code: SecureRandom.hex(8),
+        settled_at:     Time.current
+      )
+      rental_payment.save!
 
-    redirect_to booking_payment_path(@booking, payment),
-                notice: "Payment succeeded"
+      # Redirect to the rental payment (the larger one, typically)
+      redirect_to booking_payment_path(@booking, rental_payment),
+                  notice: "Payment succeeded - Both deposit and rental fee have been paid"
+    else
+      # Single payment for deposit or rental only
+      payment = @booking.payments.build(
+        payer:         current,
+        payee:         @booking.owner,
+        payment_type:  payment_type,
+        dollar_amount: determine_amount(payment_type),
+        status:        "succeeded"
+      )
+
+      # Required for succeeded payments
+      payment.reference_code = SecureRandom.hex(8)
+      payment.settled_at     = Time.current
+
+      # IMPORTANT: use bang so test fails loudly if validations fail
+      payment.save!
+
+      redirect_to booking_payment_path(@booking, payment),
+                  notice: "Payment succeeded"
+    end
   end
 
   # GET /bookings/:booking_id/payments/:id
@@ -67,11 +97,7 @@ class PaymentsController < ApplicationController
     item = @booking.item
     days = (@booking.end_date - @booking.start_date).to_i
     rental_subtotal = (item.price || 0) * days
-    deposit_amount  = if item.respond_to?(:deposit_amount) && item.deposit_amount.present?
-                        item.deposit_amount
-                      else
-                        0
-                      end
+    deposit_amount  = item.deposit_amount || 0
 
     case payment_type
     when "deposit"

@@ -13,6 +13,7 @@ Feature: Create a new account
     Given I am a new user
     And I am on the account creation form
     When I fill in "Username" with "new_user"
+    And I fill in "Email" with "new_user@example.com"
     And I fill in "Password" with "password"
     And I press "Create Account"
     Then I should be where I was before clicking "Sign Up"

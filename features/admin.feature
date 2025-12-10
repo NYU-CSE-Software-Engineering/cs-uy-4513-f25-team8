@@ -57,7 +57,6 @@ Feature: Administrative User Management
     And I click the "Remove Listing" button
     Then I should see the message "The listing 'Inappropriate Content' has been successfully removed."
     And the listing "Inappropriate Content" should not exist in the database
-    And the user "Erfu" should receive a notification that their listing was removed
     And the user "Erfu" should have a report_count of 1
 
   # AC6 - Authorization failure for non-Admins

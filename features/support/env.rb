@@ -10,6 +10,18 @@ require 'cucumber/rails'
 require "rspec/mocks"
 World(RSpec::Mocks::ExampleMethods)
 
+# Include Warden test helpers for Devise authentication
+require 'warden/test/helpers'
+World(Warden::Test::Helpers)
+
+Before do
+  Warden.test_mode!
+end
+
+After do
+  Warden.test_reset!
+end
+
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how

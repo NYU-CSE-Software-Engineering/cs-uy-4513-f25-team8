@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_08_165449) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
 
   create_table "bookings", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "decline_reason"
     t.date "end_date"
     t.integer "item_id", null: false
     t.integer "owner_id", null: false
@@ -53,12 +54,45 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
     t.index ["renter_id"], name: "index_bookings_on_renter_id"
   end
 
+  create_table "contacts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.text "message", null: false
+    t.string "name", null: false
+    t.string "subject", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_contacts_on_user_id"
+  end
+
+  create_table "disputes", force: :cascade do |t|
+    t.integer "booking_id"
+    t.datetime "created_at", null: false
+    t.integer "created_by_id", null: false
+    t.text "details"
+    t.integer "item_id"
+    t.string "reason"
+    t.text "resolution_notes"
+    t.datetime "resolved_at"
+    t.integer "resolved_by_id"
+    t.string "status", default: "open"
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_disputes_on_booking_id"
+    t.index ["created_by_id"], name: "index_disputes_on_created_by_id"
+    t.index ["item_id"], name: "index_disputes_on_item_id"
+    t.index ["resolved_by_id"], name: "index_disputes_on_resolved_by_id"
+  end
+
   create_table "items", force: :cascade do |t|
     t.string "availability_status", default: "available", null: false
+    t.date "available_from"
+    t.date "available_to"
     t.string "category"
     t.datetime "created_at", null: false
+    t.decimal "deposit_amount", precision: 10, scale: 2, default: "0.0"
     t.text "description"
     t.integer "owner_id", null: false
+    t.string "payment_methods", default: "credit_card"
     t.decimal "price", precision: 10, scale: 2, null: false
     t.string "title"
     t.datetime "updated_at", null: false
@@ -83,15 +117,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "account_status"
+    t.string "account_status", default: "active", null: false
     t.datetime "created_at", null: false
     t.string "email"
+    t.string "encrypted_password", default: "", null: false
     t.string "password_digest"
+    t.datetime "remember_created_at"
     t.integer "report_count", default: 0, null: false
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
     t.string "role"
+    t.string "security_answer_1"
+    t.string "security_answer_2"
+    t.string "security_question_1"
+    t.string "security_question_2"
     t.datetime "updated_at", null: false
     t.string "username"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -99,6 +143,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_000000) do
   add_foreign_key "bookings", "items"
   add_foreign_key "bookings", "users", column: "owner_id"
   add_foreign_key "bookings", "users", column: "renter_id"
+  add_foreign_key "contacts", "users"
+  add_foreign_key "disputes", "bookings"
+  add_foreign_key "disputes", "items"
+  add_foreign_key "disputes", "users", column: "created_by_id"
+  add_foreign_key "disputes", "users", column: "resolved_by_id"
   add_foreign_key "items", "users", column: "owner_id"
   add_foreign_key "payments", "bookings"
   add_foreign_key "payments", "users", column: "payee_id"

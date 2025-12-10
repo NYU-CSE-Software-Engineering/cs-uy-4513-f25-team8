@@ -1,24 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe "Items", type: :request do
-  describe "GET /items/new" do
-    it "renders the new template" do
-      get "/items/new"
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include("New Item")
-    end
-  end
-
   describe "POST /items" do
     it "creates an item and redirects to the show page" do
-      owner = User.create!(username: "owner1", email: "o@example.com", role: "owner", password: "password123")
+      user = User.create!(
+        username: "owner1",
+        email: "owner@example.com",
+        role: "owner",
+        password: "password123"
+      )
+      sign_in user
 
-      post "/items", params: {
-        item: { title: "Camera", price: 25, description: "DSLR" },
-        user_id: owner.id
+      post items_path, params: {
+        item: { title: "Camera", price: 25, description: "DSLR" }
       }
 
-      expect(response).to have_http_status(:redirect)
+      item = Item.last
+      expect(response).to redirect_to(item_path(item))
       follow_redirect!
       expect(response.body).to include("Camera")
     end

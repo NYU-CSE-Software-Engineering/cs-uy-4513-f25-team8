@@ -1,0 +1,121 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <h1 class="display-5 fw-bold mb-2">
+      <i class="bi bi-person-circle me-2 text-primary"></i>User Details
+    </h1>
+    <p class="text-muted">View and manage user account information</p>
+  </div>
+</div>
+
+<!-- User Information Card -->
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0 fw-bold">
+          <i class="bi bi-info-circle me-2 text-primary"></i>Account Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <small class="text-muted d-block">Username</small>
+            <strong class="fs-5"><%= @user.username %></strong>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Email</small>
+            <strong class="fs-6"><%= @user.email %></strong>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Role</small>
+            <span class="badge bg-<%= @user.role == 'admin' ? 'danger' : @user.role == 'owner' ? 'info' : 'success' %> fs-6">
+              <%= @user.role.capitalize %>
+            </span>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Account Status</small>
+            <span class="badge bg-<%= @user.account_status == 'active' ? 'success' : 'secondary' %> fs-6">
+              <i class="bi bi-<%= @user.account_status == 'active' ? 'check-circle' : 'x-circle' %> me-1"></i>
+              <%= @user.account_status.capitalize %>
+            </span>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Report Count</small>
+            <% if @user.report_count > 0 %>
+              <span class="badge bg-warning text-dark fs-6">
+                <i class="bi bi-flag me-1"></i><%= @user.report_count %> <%= @user.report_count == 1 ? 'report' : 'reports' %>
+              </span>
+            <% else %>
+              <span class="text-muted">0 reports</span>
+            <% end %>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted d-block">Account Created</small>
+            <strong><%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Management -->
+    <div class="card shadow-sm border-0 <%= @user.account_status == 'active' ? 'border-danger' : 'border-success' %>">
+      <div class="card-header bg-<%= @user.account_status == 'active' ? 'danger' : 'success' %> text-white">
+        <h5 class="mb-0">
+          <i class="bi bi-shield-exclamation me-2"></i>Account Management
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @user.account_status == 'active' %>
+          <p class="text-muted mb-3">
+            <i class="bi bi-info-circle me-2"></i>
+            Disabling this account will prevent the user from logging in and accessing the platform.
+          </p>
+          <%= form_with url: admin_user_path(@user), method: :patch, local: true, data: { confirm: "Are you sure you want to disable this account?", turbo_confirm: "Are you sure you want to disable this account?" } do |f| %>
+            <%= f.hidden_field :account_status, value: 'disabled' %>
+            <%= f.submit "Disable Account", class: "btn btn-danger btn-lg" %>
+          <% end %>
+        <% else %>
+          <p class="text-muted mb-3">
+            <i class="bi bi-info-circle me-2"></i>
+            Enabling this account will restore the user's access to the platform.
+          </p>
+          <%= form_with url: admin_user_path(@user), method: :patch, local: true do |f| %>
+            <%= f.hidden_field :account_status, value: 'active' %>
+            <%= f.submit "Enable Account", class: "btn btn-success btn-lg" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-white border-bottom">
+        <h6 class="mb-0 fw-bold">Quick Stats</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <small class="text-muted d-block">Listed Items</small>
+          <strong class="fs-4"><%= @user.items.count %></strong>
+        </div>
+        <div class="mb-3">
+          <small class="text-muted d-block">Bookings as Renter</small>
+          <strong class="fs-4"><%= @user.bookings_as_renter.count %></strong>
+        </div>
+        <div>
+          <small class="text-muted d-block">Bookings as Owner</small>
+          <strong class="fs-4"><%= @user.bookings_as_owner.count %></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Back Button -->
+<div class="mt-4">
+  <%= link_to admin_users_path, class: "btn btn-outline-secondary" do %>
+    <i class="bi bi-arrow-left me-2"></i>Back to User List
+  <% end %>
+</div>
+

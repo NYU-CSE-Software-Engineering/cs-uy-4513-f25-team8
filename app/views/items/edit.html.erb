@@ -1,0 +1,240 @@
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-primary text-white">
+        <h2 class="card-title mb-0">
+          <i class="bi bi-pencil me-2"></i>Edit Item Listing
+        </h2>
+      </div>
+      <div class="card-body p-4">
+        <%= form_with model: @item, local: true, multipart: true, class: "needs-validation", novalidate: true do |f| %>
+          <% if @item.errors.any? %>
+            <div class="alert alert-danger" role="alert">
+              <h5 class="alert-heading">
+                <i class="bi bi-exclamation-triangle me-2"></i>Please fix the following errors:
+              </h5>
+              <ul class="mb-0">
+                <% @item.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="row g-3">
+            <!-- Title -->
+            <div class="col-12">
+              <%= f.label :title, "Item Title", class: "form-label fw-semibold" %>
+              <%= f.text_field :title, class: "form-control form-control-lg", placeholder: "e.g., Canon EOS R5 Camera", required: true %>
+              <div class="form-text">Give your item a clear, descriptive title</div>
+            </div>
+
+            <!-- Category and Price -->
+            <div class="col-md-6">
+              <%= f.label :category, "Category", class: "form-label fw-semibold" %>
+              <%= f.select :category, 
+                  options_for_select([
+                    ["Select a category", ""],
+                    ["Electronics", "Electronics"],
+                    ["Clothing", "Clothing"],
+                    ["Furniture", "Furniture"],
+                    ["Sports", "Sports"],
+                    ["Tools", "Tools"],
+                    ["Other", "Other"]
+                  ], @item.category),
+                  {},
+                  { class: "form-select form-select-lg" } %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :price, "Price per Day", class: "form-label fw-semibold" %>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text">$</span>
+                <%= f.number_field :price, step: 0.01, min: 1, max: 10000, class: "form-control", placeholder: "0.00", required: true %>
+              </div>
+              <div class="form-text">Set your daily rental price ($1 - $10,000)</div>
+            </div>
+
+            <!-- Deposit Amount -->
+            <div class="col-md-6">
+              <%= f.label :deposit_amount, "Deposit Amount", class: "form-label fw-semibold" %>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text">$</span>
+                <%= f.number_field :deposit_amount, step: 0.01, min: 0, class: "form-control", placeholder: "0.00", value: @item.deposit_amount || 0 %>
+              </div>
+              <div class="form-text">Security deposit amount (optional)</div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="col-md-6">
+              <%= f.label :payment_methods, "Accepted Payment Methods", class: "form-label fw-semibold" %>
+              <%= f.select :payment_methods, 
+                  options_for_select([
+                    ["Credit Card Only", "credit_card"],
+                    ["Cash Only", "cash"],
+                    ["Both Credit Card and Cash", "both"]
+                  ], @item.payment_methods || "credit_card"),
+                  {},
+                  { class: "form-select form-select-lg", required: true } %>
+              <div class="form-text">Select which payment methods you accept</div>
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+              <%= f.label :description, "Description", class: "form-label fw-semibold" %>
+              <%= f.text_area :description, rows: 5, class: "form-control", placeholder: "Describe your item in detail. Include condition, features, and any important information renters should know...", required: true %>
+              <div class="form-text">Provide detailed information about your item</div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-12">
+              <%= f.label :image, "Item Image", class: "form-label fw-semibold" %>
+              <% if @item.image.attached? %>
+                <div class="mb-3">
+                  <p class="text-muted small mb-2">Current image:</p>
+                  <%= image_tag @item.image, class: "img-thumbnail", style: "max-height: 200px; max-width: 100%;" %>
+                </div>
+              <% end %>
+              <div class="border rounded p-3 bg-light">
+                <%= f.file_field :image, accept: "image/*", class: "form-control form-control-lg", id: "imageInput" %>
+                <div class="form-text mt-2">
+                  <i class="bi bi-info-circle me-1"></i>Upload a new image to replace the current one (JPG, PNG, GIF - Max 10MB). Leave blank to keep current image.
+                </div>
+              </div>
+              <div id="imagePreview" class="mt-3 text-center" style="display: none;">
+                <div class="position-relative d-inline-block">
+                  <img id="previewImg" src="#" alt="Preview" class="img-thumbnail shadow-sm" style="max-height: 400px; max-width: 100%; border-radius: 0.5rem;">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" id="removePreview" style="display: none;">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+                <p class="text-muted small mt-2 mb-0">
+                  <i class="bi bi-check-circle text-success me-1"></i>New image preview
+                </p>
+              </div>
+            </div>
+
+            <!-- Availability Date Range -->
+            <div class="col-12">
+              <hr class="my-4">
+              <h5 class="fw-bold mb-3">
+                <i class="bi bi-calendar-range me-2 text-primary"></i>Availability Period
+              </h5>
+              <p class="text-muted small mb-3">Select the date range when your item is available for rent</p>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :available_from, "Available From", class: "form-label fw-semibold" %>
+              <%= f.date_field :available_from, class: "form-control form-control-lg", min: Date.today %>
+              <div class="form-text">When does the item become available?</div>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :available_to, "Available Until", class: "form-label fw-semibold" %>
+              <%= f.date_field :available_to, class: "form-control form-control-lg", min: Date.today %>
+              <div class="form-text">When does the item stop being available?</div>
+            </div>
+
+            <!-- Availability Status -->
+            <div class="col-12">
+              <%= f.label :availability_status, "Current Status", class: "form-label fw-semibold" %>
+              <%= f.select :availability_status, 
+                  options_for_select([
+                    ["Available", "available"],
+                    ["Pending", "pending"],
+                    ["Unavailable", "unavailable"]
+                  ], @item.availability_status || "available"),
+                  {},
+                  { class: "form-select form-select-lg" } %>
+              <div class="form-text">Set the current availability status of your item</div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="col-12 mt-4">
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <%= link_to "Cancel", @item, class: "btn btn-outline-secondary btn-lg me-md-2" %>
+                <%= f.submit "Update Listing", class: "btn btn-primary btn-lg px-5" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Image preview functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removePreview = document.getElementById('removePreview');
+
+    if (imageInput) {
+      imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // Validate file type
+          if (!file.type.match('image.*')) {
+            alert('Please select an image file (JPG, PNG, GIF, etc.)');
+            this.value = '';
+            return;
+          }
+          
+          // Validate file size (10MB)
+          if (file.size > 10 * 1024 * 1024) {
+            alert('Image size must be less than 10MB');
+            this.value = '';
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            imagePreview.style.display = 'block';
+            removePreview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          imagePreview.style.display = 'none';
+          removePreview.style.display = 'none';
+        }
+      });
+    }
+
+    // Remove preview functionality
+    if (removePreview) {
+      removePreview.addEventListener('click', function() {
+        if (imageInput) {
+          imageInput.value = '';
+          imagePreview.style.display = 'none';
+          removePreview.style.display = 'none';
+        }
+      });
+    }
+
+    // Date validation: available_to must be after available_from
+    const availableFrom = document.querySelector('input[name="item[available_from]"]');
+    const availableTo = document.querySelector('input[name="item[available_to]"]');
+
+    if (availableFrom && availableTo) {
+      availableFrom.addEventListener('change', function() {
+        if (this.value) {
+          availableTo.min = this.value;
+          // If available_to is already set and is before the new available_from, clear it
+          if (availableTo.value && availableTo.value < this.value) {
+            availableTo.value = '';
+          }
+        }
+      });
+
+      availableTo.addEventListener('change', function() {
+        if (availableFrom.value && this.value && this.value < availableFrom.value) {
+          alert('Available until date must be after available from date');
+          this.value = '';
+        }
+      });
+    }
+  });
+</script>
