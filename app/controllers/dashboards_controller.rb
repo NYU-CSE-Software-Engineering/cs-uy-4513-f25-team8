@@ -6,5 +6,6 @@ class DashboardsController < ApplicationController
     @items = @user.items.order(created_at: :desc).limit(10)
     @bookings_as_renter = @user.bookings_as_renter.order(created_at: :desc).limit(10)
     @bookings_as_owner = @user.bookings_as_owner.order(created_at: :desc).limit(10)
+    @my_disputes = @user.disputes_created.order(created_at: :desc).limit(10)
   end
 end
