@@ -12,7 +12,7 @@ RSpec.describe "Api::V1::Admin::Disputes", type: :request do
 
       it "returns all disputes" do
         dispute1 = create(:dispute, item: item, created_by: renter)
-        dispute2 = create(:dispute, item: item, created_by: renter)
+        dispute2 = create(:dispute, item: create(:item, owner: owner), created_by: create(:user, :renter))
         
         get "/api/v1/admin/disputes"
         
@@ -34,6 +34,17 @@ RSpec.describe "Api::V1::Admin::Disputes", type: :request do
         expect(dispute_data["dispute_details"]).to have_key("details")
         expect(dispute_data["dispute_details"]).to have_key("status")
       end
+
+      it "filters by status when provided" do
+        create(:dispute, :open, item: item, created_by: renter)
+        create(:dispute, :resolved, item: create(:item, owner: owner), created_by: create(:user, :renter))
+
+        get "/api/v1/admin/disputes", params: { status: "open" }
+
+        json = JSON.parse(response.body)
+        expect(json["disputes"].length).to eq(1)
+        expect(json["disputes"].first["dispute_details"]["status"]).to eq("open")
+      end
     end
 
     context "when user is not an admin" do
@@ -41,6 +52,36 @@ RSpec.describe "Api::V1::Admin::Disputes", type: :request do
 
       it "returns unauthorized" do
         get "/api/v1/admin/disputes"
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe "PATCH /api/v1/admin/disputes/:id/resolve" do
+    let!(:dispute) { create(:dispute, item: item, created_by: renter) }
+
+    context "when user is an admin" do
+      before { sign_in admin }
+
+      it "resolves the dispute and can disable the owner" do
+        patch "/api/v1/admin/disputes/#{dispute.id}/resolve", params: {
+          resolution_notes: "Confirmed violation",
+          disable_account: true
+        }
+
+        expect(response).to have_http_status(:success)
+        dispute.reload
+        expect(dispute.status).to eq("resolved")
+        expect(dispute.resolution_notes).to eq("Confirmed violation")
+        expect(owner.reload.account_status).to eq("disabled")
+      end
+    end
+
+    context "when user is not an admin" do
+      before { sign_in renter }
+
+      it "returns unauthorized" do
+        patch "/api/v1/admin/disputes/#{dispute.id}/resolve", params: { resolution_notes: "No issue" }
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -99,6 +140,25 @@ RSpec.describe "Api::V1::Admin::Disputes", type: :request do
             details: "Test details"
           }
         }.to change(Dispute, :count).by(1)
+      end
+
+      it "prevents duplicate dispute submissions by the same user for the same item" do
+        post "/api/v1/admin/disputes/new", params: {
+          itemID: item.id,
+          reason: "First",
+          details: "First details"
+        }
+
+        post "/api/v1/admin/disputes/new", params: {
+          itemID: item.id,
+          reason: "Second",
+          details: "Second details"
+        }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        json = JSON.parse(response.body)
+        expect(json["success"]).to be false
+        expect(json["error"]).to match(/already reported/i)
       end
     end
 

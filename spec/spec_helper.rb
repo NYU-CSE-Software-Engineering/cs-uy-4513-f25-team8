@@ -13,6 +13,7 @@
 # it.
 #
 require 'simplecov'
+SimpleCov.minimum_coverage 80
 SimpleCov.start
 
 # Previous content of test helper now starts here

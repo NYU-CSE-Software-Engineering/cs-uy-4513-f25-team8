@@ -3,9 +3,11 @@ class Api::V1::Admin::DisputesController < ApplicationController
   before_action :ensure_admin_for_index
   skip_before_action :ensure_admin_for_index, only: [:create]
   before_action :ensure_user_can_create_dispute, only: [:create]
+  before_action :set_dispute, only: [:resolve]
 
   def index
-    @disputes = Dispute.all.order(created_at: :desc)
+    scope = params[:status].present? ? Dispute.where(status: params[:status]) : Dispute.all
+    @disputes = scope.order(created_at: :desc)
     
     disputes_data = @disputes.map do |dispute|
       {
@@ -35,6 +37,12 @@ class Api::V1::Admin::DisputesController < ApplicationController
       return
     end
 
+    existing = Dispute.find_by(item: item, created_by: current_user)
+    if existing
+      render json: { success: false, error: "You have already reported this listing.", dispute_id: existing.id, status: existing.status }, status: :unprocessable_entity
+      return
+    end
+
     dispute = Dispute.new(
       item: item,
       created_by: current_user,
@@ -51,7 +59,46 @@ class Api::V1::Admin::DisputesController < ApplicationController
     end
   end
 
+  def resolve
+    return unless @dispute
+
+    unless current_user&.role == 'admin'
+      render json: { error: "Unauthorized" }, status: :unauthorized
+      return
+    end
+
+    status = params[:status].presence || 'resolved'
+    unless %w[open resolved].include?(status)
+      render json: { success: false, error: "Invalid status" }, status: :unprocessable_entity
+      return
+    end
+
+    Dispute.transaction do
+      @dispute.update!(
+        status: status,
+        resolved_by: current_user,
+        resolved_at: Time.current,
+        resolution_notes: params[:resolution_notes]
+      )
+
+      if ActiveModel::Type::Boolean.new.cast(params[:disable_account]) && @dispute.item&.owner
+        @dispute.item.owner.update!(account_status: 'disabled')
+      end
+    end
+
+    render json: { success: true, dispute_id: @dispute.id, status: @dispute.status }
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { success: false, error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
+  end
+
   private
+
+  def set_dispute
+    @dispute = Dispute.find_by(id: params[:id])
+    return if @dispute.present?
+
+    render json: { error: "Dispute not found" }, status: :not_found and return
+  end
 
   def authenticate_user_for_api
     unless user_signed_in?
@@ -67,7 +114,6 @@ class Api::V1::Admin::DisputesController < ApplicationController
   end
 
   def ensure_user_can_create_dispute
-    # User must be renter or owner of the item, or admin
     item = Item.find_by(id: params[:itemID])
     
     if item.nil?
@@ -75,11 +121,10 @@ class Api::V1::Admin::DisputesController < ApplicationController
       return
     end
 
-    # Check if user is authorized: admin, owner, or renter with a booking
     is_admin = current_user&.role == 'admin'
     is_owner = current_user == item.owner
     is_renter_with_booking = current_user&.role == 'renter' && Booking.exists?(item_id: item.id, renter_id: current_user.id)
-    
+
     unless is_admin || is_owner || is_renter_with_booking
       render json: { error: "Unauthorized" }, status: :unauthorized
       return

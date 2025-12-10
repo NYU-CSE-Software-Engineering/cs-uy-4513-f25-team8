@@ -27,6 +27,14 @@ RSpec.describe Dispute, type: :model do
       expect(dispute).not_to be_valid
       expect(dispute.errors[:status]).to be_present
     end
+
+    it "prevents the same user from reporting the same item twice" do
+      create(:dispute, item: item, created_by: user)
+      duplicate = build(:dispute, item: item, created_by: user)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:item_id]).to include("has already been reported by you")
+    end
   end
 
   describe "associations" do
@@ -50,7 +58,7 @@ RSpec.describe Dispute, type: :model do
   describe "scopes" do
     it "has open scope" do
       open_dispute = create(:dispute, :open, item: item, created_by: user)
-      resolved_dispute = create(:dispute, :resolved, item: item, created_by: user)
+      resolved_dispute = create(:dispute, :resolved, item: item, created_by: create(:user))
       
       expect(Dispute.open).to include(open_dispute)
       expect(Dispute.open).not_to include(resolved_dispute)
@@ -58,7 +66,7 @@ RSpec.describe Dispute, type: :model do
 
     it "has resolved scope" do
       open_dispute = create(:dispute, :open, item: item, created_by: user)
-      resolved_dispute = create(:dispute, :resolved, item: item, created_by: user)
+      resolved_dispute = create(:dispute, :resolved, item: item, created_by: create(:user))
       
       expect(Dispute.resolved).to include(resolved_dispute)
       expect(Dispute.resolved).not_to include(open_dispute)

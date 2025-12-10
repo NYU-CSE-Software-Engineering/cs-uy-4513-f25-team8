@@ -5,8 +5,10 @@ class Dispute < ApplicationRecord
   belongs_to :resolved_by, class_name: "User", optional: true
 
   validates :status, presence: true, inclusion: { in: %w[open resolved] }
+  validates :item, presence: true
   validates :reason, presence: true
   validates :details, presence: true
+  validates :item_id, uniqueness: { scope: :created_by_id, message: "has already been reported by you" }
 
   scope :open, -> { where(status: 'open') }
   scope :resolved, -> { where(status: 'resolved') }

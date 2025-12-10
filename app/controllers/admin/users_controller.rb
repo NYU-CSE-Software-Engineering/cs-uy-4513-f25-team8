@@ -3,6 +3,8 @@ class Admin::UsersController < ApplicationController
 
   def index
     @users = User.all.order(created_at: :desc)
+    @open_disputes = Dispute.open.order(created_at: :desc).limit(25)
+    @resolved_disputes = Dispute.resolved.order(created_at: :desc).limit(10)
     
     if params[:search].present?
       search_term = "%#{params[:search]}%"
