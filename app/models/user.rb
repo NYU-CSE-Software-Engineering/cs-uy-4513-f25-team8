@@ -23,6 +23,20 @@ class User < ApplicationRecord
   has_many :disputes_created, class_name: "Dispute", foreign_key: :created_by_id, dependent: :destroy
   has_many :contacts, dependent: :destroy
 
+  has_many :messages,
+           foreign_key: :sender_id,
+           dependent: :destroy
+
+  has_many :owned_conversations,
+           class_name: "Conversation",
+           foreign_key: :owner_id,
+           dependent: :destroy
+
+  has_many :rented_conversations,
+           class_name: "Conversation",
+           foreign_key: :renter_id,
+           dependent: :destroy
+
   # Defaults
   attribute :account_status, :string, default: "active"
   attribute :report_count, :integer, default: 0

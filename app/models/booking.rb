@@ -4,6 +4,7 @@ class Booking < ApplicationRecord
   belongs_to :owner, class_name: "User", optional: true
   
   has_many :payments, dependent: :destroy   # ← added for payment
+  has_one :conversation, dependent: :destroy
 
   enum :status, { requested: 0, approved: 1, declined: 2 }
   before_validation :set_default_status, on: :create
