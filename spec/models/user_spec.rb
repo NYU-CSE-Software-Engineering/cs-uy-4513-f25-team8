@@ -120,6 +120,58 @@ RSpec.describe User, type: :model do
 
       expect(owner.bookings_as_owner).to include(booking1, booking2)
     end
+    it "does not allow spaces in username" do
+      u = User.new(username: "bad user", role: "renter", email: "valid@example.com", password: "password123")
+      expect(u).not_to be_valid
+      expect(u.errors[:username]).to be_present
+    end
 
+    it "does not allow special characters in username" do
+      invalid_usernames = ["lily!", "erfu$", "isa@rent", "weird.name", "dash-user"]
+      invalid_usernames.each do |name|
+        u = User.new(username: name, role: "owner", email: "valid@example.com", password: "password123")
+        expect(u).not_to be_valid
+        expect(u.errors[:username]).to be_present
+      end
+    end
+
+    it "allows letters numbers and underscores in username" do
+      u = User.new(username: "valid_name123", role: "admin", email: "good@example.com", password: "password123")
+      expect(u).to be_valid
+    end
+
+    it "rejects invalid email formats" do
+      invalid_emails = [
+        "plainaddress",
+        "missing_at_symbol.com",
+        "missing_domain@.com",
+        "missing_tld@test",
+        "@nousername.com"
+      ]
+
+      invalid_emails.each do |email|
+        u = User.new(username: "someone", role: "renter", email: email, password: "password123")
+        expect(u).not_to be_valid
+        expect(u.errors[:email]).to be_present
+      end
+    end
+
+    it "accepts properly structured email" do
+      u = User.new(username: "good_user", role: "owner", email: "valid.email_123@example.co", password: "password123")
+      expect(u).to be_valid
+    end
+    it "does not allow username longer than 20 characters" do
+      long_name = "a" * 21
+      u = User.new(username: long_name, role: "renter", email: "long@example.com", password: "password123")
+
+      expect(u).not_to be_valid
+      expect(u.errors[:username]).to be_present
+    end
+
+    it "allows a username that is 20 characters long" do
+      name_20 = "a" * 20
+      u = User.new(username: name_20, role: "owner", email: "valid@example.com", password: "password123")
+      expect(u).to be_valid
+    end
 end
 

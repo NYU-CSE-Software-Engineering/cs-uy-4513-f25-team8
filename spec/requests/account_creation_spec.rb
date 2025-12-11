@@ -29,4 +29,38 @@ RSpec.describe "Account Creation", type: :request do
       expect(response.body).to match(/successfully|created|welcome/i)
     end
   end
+  it "does not redirect and shows an error when username is invalid" do
+    expect {
+      post user_registration_path, params: {
+        user: {
+          username: "bad username",
+          role: "renter",
+          email: "valid@example.com",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+      }
+    }.not_to change(User, :count) #make sure nothing was added to user.db
+
+    expect(response).to have_http_status(:unprocessable_entity) #check that form re-rendered
+    expect(response.body).to include("Username") # check that error displayed to user
+    expect(response.body).to include("invalid").or include("Invalid")
+  end
+  it "does not redirect and shows an error when email format is invalid" do
+    expect {
+      post user_registration_path, params: {
+        user: {
+          username: "validusername",
+          role: "renter",
+          email: "notanemail",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+      }
+    }.not_to change(User, :count)
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response.body).to include("Email")
+    expect(response.body).to include("invalid").or include("Invalid")
+  end
+
 end
