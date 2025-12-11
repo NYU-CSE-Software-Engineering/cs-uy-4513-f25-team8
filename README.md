@@ -73,36 +73,57 @@ This project was developed for:
 
 ## 📡 API Overview
 Each module exposes a RESTful API for inter-module communication and external integration.
-Some core endpoints include:
 
-# 🔧 API Overview
+### 🎒 Items
+- **GET /items** — Show all item listings
+- **POST /items** — Create a new item listing as a lender
+- **GET /items/:id** — Show item details
+- **PATCH /items/:id** — Update an item
+- **DELETE /items/:id** — Delete an item
+- **DELETE /admin/items/:id** — Admin force-delete an item
 
-Each module exposes a RESTful API for identity, listings, rentals, messaging, and admin operations. Core endpoints include:
+### 🤝 Bookings & Payments
+- **POST /bookings** — Create a booking request
+- **PATCH /bookings/:id/approve** — Approve a booking as lender
+- **PATCH /bookings/:id/decline** — Decline a booking as lender
+- **POST /bookings/:booking_id/payments** — Process a payment for a booking <!-- do we have payments working? -->
 
-## 👤 User / Auth API
-- **POST /api/v1/auth/register** — Register a new account
-- **POST /api/v1/auth/login** — Log into an account
-- **POST /api/v1/auth/id** — Retrieve account info via token
+### 💬 Contacts
+- **POST /contacts** — Submit a contact form inquiry
 
-## 🎒 Items API
-- **GET /api/v1/items/:page** — Get paginated item listings
-- **GET /api/v1/items/:id** — Get detailed info about an item
-- **POST /api/v1/items/new** — Create a new item listing
-- **DELETE /api/v1/items/:id** — Delete an item listing
+### Disputes
+- **POST /api/v1/disputes** — Open a new dispute as non-admin
+- **GET /api/v1/disputes/mine** — Retrieve authenticated user's disputes
 
-## 🤝 Lender / Booking API
-- **POST /api/v1/booking/:id/rent** — Rent an item
-- **POST /api/v1/booking/:id/return** — Mark an item as returned
+### Admin API
+- **POST /api/v1/admin/ban** — Ban a user account
+- **POST /api/v1/admin/disputes/new** — Create a dispute as admin
+- **GET /api/v1/admin/disputes** — List all system disputes
+- **PATCH /api/v1/admin/disputes/:id/resolve** — Resolve a specific dispute
 
-## 💬 Messages API
-- **GET /api/v1/messages/conversations/** — Get list of user conversations
-- **GET /api/v1/messages/conversations/:conversationID/:page** — Get paginated messages in a conversation
-- **POST /api/v1/messages/send/:conversationID** — Send a message
 
-## 🛡️ Admin API
-- **POST /api/v1/admin/ban** — Enable or disable an account
-- **POST /api/v1/admin/disputes/new** — Create a dispute
-- **GET /api/v1/admin/disputes** — Retrieve all disputes
+## Viewable Pages
+
+These routes render HTML views for the user interface.
+
+### 👤 User & Authentication
+- **`/users/sign_in`** — Login page
+- **`/users/sign_up`** — Registration page
+- **`/password_reset`** — Custom password reset (Username form)
+- **`/password_reset/questions`** — Security questions form
+- **`/security/verify/:id`** — Identity verification page
+
+### 🏠 Core Application
+- **`/`** — Homepage
+- **`/dashboard`** — User Dashboard
+- **`/items`** — Browse all items
+- **`/items/:id`** — View single item details
+- **`/bookings`** — View current and past bookings
+- **`/contacts/new`** — Contact support/admin form
+
+### 🛡️ Admin Panel
+- **`/admin/users`** — User management list
+- **`/admin/contacts`** — View contact form submissions
 
 ---
 

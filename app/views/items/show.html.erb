@@ -124,6 +124,38 @@
         <% if user_signed_in? %>
           <% if current_user.id != @item.owner_id %>
             <%= link_to "Request to Rent", new_booking_path(item_id: @item.id), class: "btn btn-primary btn-lg w-100 mb-2" %>
+            <button class="btn btn-outline-danger w-100 mb-2" data-bs-toggle="collapse" data-bs-target="#reportForm">
+              <i class="bi bi-flag me-2"></i>Report Listing
+            </button>
+            <div class="collapse" id="reportForm">
+              <div class="card card-body border-danger mb-2">
+                <div id="report-status" class="alert d-none mb-3"></div>
+                <h6 class="fw-bold mb-2">Report this listing</h6>
+                <form id="report-listing-form">
+                  <div class="mb-2">
+                    <label class="form-label">Reason</label>
+                    <select name="reason" class="form-select" required>
+                      <option value="">Select a reason</option>
+                      <option value="Fraud or scam">Fraud or scam</option>
+                      <option value="Inappropriate content">Inappropriate content</option>
+                      <option value="Safety concern">Safety concern</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Details</label>
+                    <textarea name="details" class="form-control" rows="3" placeholder="Add details to help admins review" required></textarea>
+                  </div>
+                  <input type="hidden" name="itemID" value="<%= @item.id %>">
+                  <button type="submit" class="btn btn-danger w-100">
+                    Submit Report
+                  </button>
+                  <div class="small text-muted mt-2">
+                    Reports are reviewed by admins. You can track status in your dashboard.
+                  </div>
+                </form>
+              </div>
+            </div>
           <% else %>
             <!-- Owner Actions -->
             <div class="d-grid gap-2">
@@ -181,3 +213,55 @@
     <i class="bi bi-arrow-left me-2"></i>Back to Browse
   <% end %>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("report-listing-form");
+    if (!form) return;
+
+    const token = document.querySelector("meta[name='csrf-token']")?.content;
+    const statusBox = document.getElementById("report-status");
+    const submitBtn = form.querySelector("button[type='submit']");
+
+    const showStatus = (type, message) => {
+      if (!statusBox) return;
+      statusBox.classList.remove("d-none", "alert-success", "alert-danger");
+      statusBox.classList.add(type === "success" ? "alert-success" : "alert-danger", "show", "alert");
+      statusBox.textContent = message;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/v1/disputes", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": token,
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showStatus("success", "Report submitted. You can track status in your dashboard.");
+          submitBtn.disabled = true;
+          form.reset();
+        } else {
+          showStatus("error", data.error || "Failed to submit report.");
+          submitBtn.disabled = false;
+        }
+      } catch (err) {
+        showStatus("error", "Network error while submitting report.");
+        submitBtn.disabled = false;
+      } finally {
+        // keep submit disabled on success to prevent duplicates; re-enable only on errors above
+      }
+    });
+  });
+</script>

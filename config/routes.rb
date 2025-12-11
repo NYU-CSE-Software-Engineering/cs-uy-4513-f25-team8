@@ -60,10 +60,17 @@ Rails.application.routes.draw do
   # API namespace
   namespace :api do
     namespace :v1 do
+      resources :disputes, only: [:create] do
+        collection do
+          get :mine
+        end
+      end
+
       namespace :admin do
         post "ban", to: "admin#ban"
         post "disputes/new", to: "disputes#create"
         get "disputes", to: "disputes#index"
+        patch "disputes/:id/resolve", to: "disputes#resolve"
       end
     end
   end
