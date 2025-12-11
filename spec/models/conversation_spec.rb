@@ -1,27 +1,64 @@
-# spec/models/conversation_spec.rb
 require 'rails_helper'
 
 RSpec.describe Conversation, type: :model do
   describe 'associations' do
-    it { should belong_to(:booking) }
-    it { should belong_to(:owner) }
-    it { should belong_to(:renter) }
+    it 'belongs to a booking, owner, and renter' do
+      booking = create(:booking)
+      owner   = create(:user)
+      renter  = create(:user)
+
+      conversation = Conversation.create(
+        booking: booking,
+        owner: owner,
+        renter: renter
+      )
+
+      expect(conversation.booking).to eq(booking)
+      expect(conversation.owner).to eq(owner)
+      expect(conversation.renter).to eq(renter)
+    end
   end
 
   describe 'validations' do
-    # In Rails 5+ belongs_to implies presence by default,
-    # but it’s still nice to have explicit specs.
-    it { should validate_presence_of(:booking) }
-    it { should validate_presence_of(:owner) }
-    it { should validate_presence_of(:renter) }
+    it 'is invalid without a booking' do
+      conversation = Conversation.new(
+        booking: nil,
+        owner: create(:user),
+        renter: create(:user)
+      )
+
+      expect(conversation).not_to be_valid
+      expect(conversation.errors[:booking]).to be_present
+    end
+
+    it 'is invalid without an owner' do
+      conversation = Conversation.new(
+        booking: create(:booking),
+        owner: nil,
+        renter: create(:user)
+      )
+
+      expect(conversation).not_to be_valid
+      expect(conversation.errors[:owner]).to be_present
+    end
+
+    it 'is invalid without a renter' do
+      conversation = Conversation.new(
+        booking: create(:booking),
+        owner: create(:user),
+        renter: nil
+      )
+
+      expect(conversation).not_to be_valid
+      expect(conversation.errors[:renter]).to be_present
+    end
 
     describe 'owner and renter must be different' do
-      let(:user) { create(:user) }
+      let(:user)    { create(:user) }
       let(:booking) { create(:booking) }
 
       it 'is invalid when owner and renter are the same user' do
-        conversation = build(
-          :conversation,
+        conversation = Conversation.new(
           booking: booking,
           owner: user,
           renter: user
@@ -35,8 +72,7 @@ RSpec.describe Conversation, type: :model do
         owner  = create(:user)
         renter = create(:user)
 
-        conversation = build(
-          :conversation,
+        conversation = Conversation.new(
           booking: booking,
           owner: owner,
           renter: renter
@@ -47,11 +83,26 @@ RSpec.describe Conversation, type: :model do
     end
 
     describe 'uniqueness per booking/participants' do
-      subject { create(:conversation) }
+      it 'does not allow duplicate conversations for the same booking/owner/renter' do
+        booking = create(:booking)
+        owner   = create(:user)
+        renter  = create(:user)
 
-      it do
-        should validate_uniqueness_of(:booking_id)
-          .scoped_to(:owner_id, :renter_id)
+        first = Conversation.create!(
+          booking: booking,
+          owner: owner,
+          renter: renter
+        )
+
+        duplicate = Conversation.new(
+          booking: booking,
+          owner: owner,
+          renter: renter
+        )
+
+        expect(duplicate).not_to be_valid
+        # adjust key depending on your validation (booking vs booking_id)
+        expect(duplicate.errors[:booking_id].presence || duplicate.errors[:booking]).to be_present
       end
     end
   end
