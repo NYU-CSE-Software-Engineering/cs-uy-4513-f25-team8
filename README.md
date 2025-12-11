@@ -6,6 +6,8 @@
 Owners can list items such as cameras, bicycles, camping gear, and equipment; renters can browse listings, negotiate, request bookings, sign agreements, and manage their rentals.  
 Both parties can report scams or suspicious activity, which administrators review to ensure platform safety and integrity.
 
+[App Link (Hosted on Heroku)](https://rent-it-app-b1355577765e.herokuapp.com/)
+
 This project was developed for:
 
 **Course:** CS-UY 4513 – Software Engineering  
